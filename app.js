@@ -60,7 +60,7 @@ function renderCart() {
 // Отправка заказа в бота
 function checkout() {
   if (cart.length === 0) {
-    alert("Корзина пуста");
+    tg.showAlert("Корзина пуста");
     return;
   }
 
@@ -69,7 +69,7 @@ function checkout() {
     total: cart.reduce((s, i) => s + i.price * i.qty, 0)
   };
 
-  tg.sendData(JSON.stringify(order));
+  tg.sendData(JSON.stringify(order)); // Отправляем объект с массивом items
   tg.close();
 }
 

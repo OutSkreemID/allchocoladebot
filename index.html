@@ -2,46 +2,22 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Ягоды в шоколаде</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Клубника в шоколаде</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+  <h1>🍓 Магазин сладостей</h1>
+  
+  <div id="catalog" class="catalog"></div>
 
-<h2>🍓 Клубника в шоколаде</h2>
+  <div class="cart">
+    <h3>Ваша корзина</h3>
+    <div id="cart"></div>
+    <button class="checkout" onclick="checkout()">Оформить заказ</button>
+  </div>
 
-<select id="product">
-  <option value="Клубника в шоколаде">Клубника 🍓</option>
-  <option value="Малина в шоколаде">Малина 🍓</option>
-  <option value="Банан в шоколаде">Банан 🍌</option>
-</select>
-
-<br><br>
-
-<input id="amount" type="number" value="1" min="1">
-
-<br><br>
-
-<textarea id="comment" placeholder="Комментарий к заказу"></textarea>
-
-<br><br>
-
-<button onclick="sendOrder()">Оформить заказ</button>
-
-<script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
-
-  function sendOrder() {
-    const order = {
-      product: document.getElementById("product").value,
-      amount: document.getElementById("amount").value,
-      comment: document.getElementById("comment").value
-    };
-
-    tg.sendData(JSON.stringify(order));
-    tg.close();
-  }
-</script>
-
+  <script src="app.js"></script>
 </body>
 </html>
