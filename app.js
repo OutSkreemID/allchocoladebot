@@ -1,11 +1,19 @@
+// Защита от запуска вне Телеграма
 const tg = window.Telegram.WebApp;
-tg.expand();
 
 let products = [];
 let cart = [];
 let counts = { strawberry: 0, raspberry: 0 };
 
-// 1. Инициализация пикеров
+// 1. Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    tg.expand();
+    initPickers();
+    loadProducts();
+    renderCart(); // Чтобы сразу показать "Корзина пуста"
+});
+
+// 2. Инициализация пикеров
 function initPickers() {
     ['strawberry', 'raspberry'].forEach(type => {
         const picker = document.getElementById(`picker-${type}`);
@@ -15,7 +23,7 @@ function initPickers() {
             const el = document.createElement('div');
             el.className = `picker-item ${i === 0 ? 'selected' : ''}`;
             el.innerText = i;
-            el.onclick = () => selectNumber(type, i, el);
+            el.onclick = function() { selectNumber(type, i, this); };
             picker.appendChild(el);
         }
     });
@@ -29,23 +37,29 @@ function selectNumber(type, val, el) {
     calcConstructor();
 }
 
-// 2. Логика вкладок
+// 3. Вкладки
 window.openTab = function(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
     document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
+    // Находим кнопку, которая вызвала это
+    if(tabId === 'catalog-tab') document.getElementById('btn-catalog').classList.add('active');
+    if(tabId === 'constructor-tab') document.getElementById('btn-constructor').classList.add('active');
+};
 
-// 3. Загрузка товаров
+// 4. Загрузка товаров
 async function loadProducts() {
+    const catalog = document.getElementById("catalog");
     try {
         const response = await fetch('products.json');
+        if (!response.ok) throw new Error("Файл не найден");
         const data = await response.json();
         products = data.products;
         renderCatalog();
     } catch (e) {
-        console.error("Ошибка загрузки товаров:", e);
+        console.error(e);
+        if(catalog) catalog.innerHTML = "Ошибка загрузки товаров. Проверьте products.json";
     }
 }
 
@@ -66,7 +80,7 @@ function renderCatalog() {
     });
 }
 
-// 4. Модальное окно
+// 5. Модалка
 window.showModal = function(product) {
     document.getElementById("modal-title").innerText = product.name;
     document.getElementById("modal-desc").innerText = product.description || "";
@@ -76,51 +90,65 @@ window.showModal = function(product) {
         closeModal();
     };
     document.getElementById("modal").style.display = "block";
-}
+};
 
 window.closeModal = function() {
     document.getElementById("modal").style.display = "none";
-}
+};
 
-// 5. Конструктор
+// 6. Конструктор
 window.calcConstructor = function() {
     const chocSelect = document.getElementById("c-chocolate");
-    const chocPrice = parseInt(chocSelect.options[chocSelect.selectedIndex].getAttribute('data-price'));
+    const chocPrice = parseInt(chocSelect.options[chocSelect.selectedIndex].getAttribute('data-price') || 0);
     const total = (counts.strawberry + counts.raspberry) * 100 + chocPrice;
     document.getElementById("constructor-price").innerText = total;
-}
+};
 
 window.addConstructorToCart = function() {
-    const total = parseInt(document.getElementById("constructor-price").innerText);
-    if (total <= 0) return tg.showAlert("Выберите количество ягод!");
-
+    const price = parseInt(document.getElementById("constructor-price").innerText);
+    if (price <= 0) {
+        alert("Выберите ягоды!"); 
+        return;
+    }
     const choc = document.getElementById("c-chocolate").value;
     const item = {
         id: Date.now(),
         name: `Свой набор (${choc})`,
         qty: 1,
-        price: total,
+        price: price,
         details: `Клубника: ${counts.strawberry}, Малина: ${counts.raspberry}`
     };
     cart.push(item);
     renderCart();
-    tg.showAlert("Конструктор добавлен!");
-}
+};
 
-// 6. Корзина
+// 7. Корзина
 window.addToCart = function(id) {
     const p = products.find(x => x.id === id);
+    if (!p) return;
     const existing = cart.find(x => x.id === id);
     if (existing) existing.qty++;
     else cart.push({ ...p, qty: 1 });
     renderCart();
-}
+};
 
 window.renderCart = function() {
     const cartDiv = document.getElementById("cart");
-    cartDiv.innerHTML = cart.length ? "" : "<p>Корзина пуста</p>";
+    const checkoutBtn = document.getElementById("main-checkout");
     
+    if (!cartDiv || !checkoutBtn) return;
+
+    if (cart.length === 0) {
+        cartDiv.innerHTML = "<p style='text-align:center; color:#999;'>Корзина пуста</p>";
+        checkoutBtn.innerText = "Оформить заказ (0 ₽)";
+        return;
+    }
+
+    cartDiv.innerHTML = "";
+    let total = 0;
+
     cart.forEach((item, index) => {
+        total += item.price * item.qty;
         const row = document.createElement("div");
         row.className = "cart-item";
         row.innerHTML = `
@@ -133,23 +161,22 @@ window.renderCart = function() {
         cartDiv.appendChild(row);
     });
     
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    document.getElementById("main-checkout").innerText = `Оформить заказ (${total} ₽)`;
-}
+    checkoutBtn.innerText = `Оформить заказ (${total} ₽)`;
+};
 
 window.removeFromCart = function(index) {
     cart.splice(index, 1);
     renderCart();
-}
+};
 
-// 7. Отправка заказа
+// 8. Отправка заказа
 window.checkout = function() {
-    if (!cart.length) return tg.showAlert("Корзина пуста!");
+    if (cart.length === 0) {
+        if (tg.showAlert) tg.showAlert("Корзина пуста!");
+        else alert("Корзина пуста!");
+        return;
+    }
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     tg.sendData(JSON.stringify({ items: cart, total: total }));
     tg.close();
-}
-
-// Старт
-initPickers();
-loadProducts();
+};

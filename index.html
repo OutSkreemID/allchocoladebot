@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strawberry Shop</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Подключаем скрипт Телеграма первым -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('catalog-tab')">Наборы</button>
-        <button class="tab-btn" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
+        <button class="tab-btn active" id="btn-catalog" onclick="openTab('catalog-tab')">Наборы</button>
+        <button class="tab-btn" id="btn-constructor" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
     </div>
 
-    <!-- Вкладка 1: Готовые наборы -->
     <div id="catalog-tab" class="tab-content active">
-        <div id="catalog" class="catalog"></div>
+        <div id="catalog" class="catalog">Загрузка товаров...</div>
     </div>
 
-    <!-- Вкладка 2: Конструктор -->
     <div id="constructor-tab" class="tab-content">
         <div class="constructor-card">
             <h3>Создай свой набор</h3>
@@ -40,14 +39,12 @@
         </div>
     </div>
 
-    <!-- Корзина (общая) -->
     <div class="cart-section">
         <h3>🛒 Ваша корзина</h3>
-        <div id="cart"><p>Корзина пуста</p></div>
+        <div id="cart"></div>
         <button class="checkout" id="main-checkout" onclick="checkout()">Оформить заказ (0 ₽)</button>
     </div>
 
-    <!-- Модальное окно -->
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModal()">&times;</span>
