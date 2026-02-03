@@ -1,59 +1,28 @@
 {
-  "categories": [
+  "products": [
     {
-      "id": "berries",
-      "title": "Ягоды в шоколаде",
-      "products": [
-        {
-          "id": "strawberry_choco",
-          "name": "Клубника в шоколаде",
-          "description": "Свежая клубника, покрытая натуральным шоколадом",
-          "price": 1200,
-          "image": "strawberry.jpg",
-          "options": {
-            "chocolate": ["Молочный", "Тёмный", "Белый"],
-            "box_sizes": [
-              { "size": 6, "price": 1200 },
-              { "size": 9, "price": 1700 },
-              { "size": 12, "price": 2200 }
-            ]
-          }
-        },
-        {
-          "id": "blueberry_choco",
-          "name": "Черника в шоколаде",
-          "description": "Отборная черника в шоколадной глазури",
-          "price": 1100,
-          "image": "blueberry.jpg",
-          "options": {
-            "chocolate": ["Молочный", "Тёмный"],
-            "box_sizes": [
-              { "size": 6, "price": 1100 },
-              { "size": 9, "price": 1600 }
-            ]
-          }
-        }
-      ]
+      "id": 1,
+      "name": "Клубника в молочном шоколаде",
+      "price": 1200,
+      "description": "Классический набор, 12 шт"
     },
     {
-      "id": "sets",
-      "title": "Наборы",
-      "products": [
-        {
-          "id": "mix_set",
-          "name": "Микс ягод",
-          "description": "Ассорти из клубники и черники в шоколаде",
-          "price": 2000,
-          "image": "mix.jpg",
-          "options": {
-            "chocolate": ["Молочный", "Тёмный", "Белый"],
-            "box_sizes": [
-              { "size": 9, "price": 2000 },
-              { "size": 12, "price": 2600 }
-            ]
-          }
-        }
-      ]
+      "id": 2,
+      "name": "Клубника со стружкой",
+      "price": 1400,
+      "description": "Белый шоколад и кокос, 12 шт"
+    },
+    {
+      "id": 3,
+      "name": "Банан в шоколаде",
+      "price": 900,
+      "description": "Спелый банан с орехами"
+    },
+    {
+      "id": 4,
+      "name": "Малина в шоколаде",
+      "price": 1500,
+      "description": "Бокс со свежей малиной"
     }
   ]
 }

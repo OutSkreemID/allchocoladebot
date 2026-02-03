@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Клубника в шоколаде</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strawberry Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <h1>🍓 Магазин сладостей</h1>
-  
-  <div id="catalog" class="catalog"></div>
+    <h1>🍓 Клубничный Магазин</h1>
 
-  <div class="cart">
-    <h3>Ваша корзина</h3>
-    <div id="cart"></div>
-    <button class="checkout" onclick="checkout()">Оформить заказ</button>
-  </div>
+    <div id="catalog" class="catalog">
+        <!-- Сюда JS вставит товары -->
+    </div>
 
-  <script src="app.js"></script>
+    <div class="cart-section">
+        <h3>🛒 Корзина</h3>
+        <div id="cart">
+            <p>Корзина пуста</p>
+        </div>
+        <button class="checkout" onclick="checkout()">Оформить заказ</button>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,81 +1,98 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// Каталог (потом вынесем в JSON)
-const products = [
-  { id: 1, name: "Клубника в шоколаде", price: 1200 },
-  { id: 2, name: "Малина в шоколаде", price: 1400 },
-  { id: 3, name: "Банан в шоколаде", price: 900 }
-];
-
+let products = [];
 let cart = [];
 
-// Рендер каталога
+// 1. Загрузка данных из JSON
+async function loadProducts() {
+    try {
+        const response = await fetch('products.json');
+        if (!response.ok) throw new Error('Ошибка загрузки JSON');
+        const data = await response.json();
+        products = data.products;
+        renderCatalog();
+    } catch (error) {
+        console.error("Критическая ошибка:", error);
+        document.getElementById("catalog").innerHTML = "<p>Не удалось загрузить товары...</p>";
+    }
+}
+
+// 2. Отрисовка каталога
 function renderCatalog() {
-  const catalog = document.getElementById("catalog");
-  catalog.innerHTML = "";
+    const catalog = document.getElementById("catalog");
+    catalog.innerHTML = "";
 
-  products.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <strong>${p.name}</strong><br>
-      <small>${p.price} ₽</small><br>
-      <button onclick="addToCart(${p.id})">Добавить</button>
-    `;
-    catalog.appendChild(div);
-  });
+    products.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <strong>${p.name}</strong><br>
+            <small>${p.description}</small><br>
+            <p>${p.price} ₽</p>
+            <button onclick="addToCart(${p.id})">Добавить</button>
+        `;
+        catalog.appendChild(div);
+    });
 }
 
-// Добавление в корзину
-function addToCart(id) {
-  const product = products.find(p => p.id === id);
-  const item = cart.find(i => i.id === id);
+// 3. Добавление в корзину
+window.addToCart = function(id) {
+    const product = products.find(p => p.id === id);
+    const cartItem = cart.find(i => i.id === id);
 
-  if (item) {
-    item.qty += 1;
-  } else {
-    cart.push({ ...product, qty: 1 });
-  }
+    if (cartItem) {
+        cartItem.qty += 1;
+    } else {
+        cart.push({ ...product, qty: 1 });
+    }
+    renderCart();
+};
 
-  renderCart();
-}
-
-// Рендер корзины
+// 4. Отрисовка корзины
 function renderCart() {
-  const cartDiv = document.getElementById("cart");
-  cartDiv.innerHTML = "";
+    const cartDiv = document.getElementById("cart");
+    cartDiv.innerHTML = "";
 
-  cart.forEach(item => {
-    const row = document.createElement("div");
-    row.className = "cart-item";
-    row.innerHTML = `
-      <span>${item.name} x${item.qty}</span>
-      <span>${item.price * item.qty} ₽</span>
-    `;
-    cartDiv.appendChild(row);
-  });
+    if (cart.length === 0) {
+        cartDiv.innerHTML = "<p>Корзина пуста</p>";
+        return;
+    }
+
+    cart.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML = `
+            <span>${item.name} x${item.qty}</span>
+            <span>${item.price * item.qty} ₽</span>
+        `;
+        cartDiv.appendChild(row);
+    });
+
+    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const totalDiv = document.createElement("div");
+    totalDiv.style.fontWeight = "bold";
+    totalDiv.style.marginTop = "10px";
+    totalDiv.innerHTML = `Итого: ${total} ₽`;
+    cartDiv.appendChild(totalDiv);
 }
 
-// Отправка заказа в бота
-function checkout() {
-  if (cart.length === 0) {
-    tg.showAlert("Корзина пуста");
-    return;
-  }
+// 5. Оформление заказа (Отправка боту)
+window.checkout = function() {
+    if (cart.length === 0) {
+        tg.showAlert("Добавьте хотя бы один товар!");
+        return;
+    }
 
-  const order = {
-    items: cart,
-    total: cart.reduce((s, i) => s + i.price * i.qty, 0)
-  };
+    const orderData = {
+        items: cart,
+        total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
+    };
 
-  tg.sendData(JSON.stringify(order)); // Отправляем объект с массивом items
-  tg.close();
-}
+    // Отправляем JSON-строку боту
+    tg.sendData(JSON.stringify(orderData));
+    tg.close();
+};
 
-// init
-renderCatalog();
-
-fetch('catalog.json')
-  .then(res => res.json())
-  .then(data => console.log(data));
+// Запуск приложения
+loadProducts();
