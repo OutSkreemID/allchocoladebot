@@ -1,19 +1,17 @@
-// Защита от запуска вне Телеграма
 const tg = window.Telegram.WebApp;
 
 let products = [];
 let cart = [];
 let counts = { strawberry: 0, raspberry: 0 };
 
-// 1. Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     tg.expand();
     initPickers();
     loadProducts();
-    renderCart(); // Чтобы сразу показать "Корзина пуста"
+    renderCart();
 });
 
-// 2. Инициализация пикеров
+// Инициализация прокрутки цифр
 function initPickers() {
     ['strawberry', 'raspberry'].forEach(type => {
         const picker = document.getElementById(`picker-${type}`);
@@ -21,7 +19,8 @@ function initPickers() {
         picker.innerHTML = "";
         for (let i = 0; i <= 20; i++) {
             const el = document.createElement('div');
-            el.className = `picker-item ${i === 0 ? 'selected' : ''}`;
+            // Если значение совпадает с текущим counts, ставим selected (нужно для сброса в 0)
+            el.className = `picker-item ${counts[type] === i ? 'selected' : ''}`;
             el.innerText = i;
             el.onclick = function() { selectNumber(type, i, this); };
             picker.appendChild(el);
@@ -37,29 +36,26 @@ function selectNumber(type, val, el) {
     calcConstructor();
 }
 
-// 3. Вкладки
+// Переключение вкладок
 window.openTab = function(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
     document.getElementById(tabId).classList.add('active');
-    // Находим кнопку, которая вызвала это
     if(tabId === 'catalog-tab') document.getElementById('btn-catalog').classList.add('active');
     if(tabId === 'constructor-tab') document.getElementById('btn-constructor').classList.add('active');
 };
 
-// 4. Загрузка товаров
+// Загрузка товаров из JSON
 async function loadProducts() {
-    const catalog = document.getElementById("catalog");
     try {
         const response = await fetch('products.json');
-        if (!response.ok) throw new Error("Файл не найден");
         const data = await response.json();
         products = data.products;
         renderCatalog();
     } catch (e) {
         console.error(e);
-        if(catalog) catalog.innerHTML = "Ошибка загрузки товаров. Проверьте products.json";
+        document.getElementById("catalog").innerHTML = "Ошибка загрузки товаров";
     }
 }
 
@@ -80,7 +76,102 @@ function renderCatalog() {
     });
 }
 
-// 5. Модалка
+// Расчет конструктора
+window.calcConstructor = function() {
+    const chocS = document.getElementById("c-chocolate-strawberry");
+    const chocR = document.getElementById("c-chocolate-raspberry");
+    
+    const priceS = parseInt(chocS.options[chocS.selectedIndex].getAttribute('data-price') || 0);
+    const priceR = parseInt(chocR.options[chocR.selectedIndex].getAttribute('data-price') || 0);
+    
+    const totalS = counts.strawberry > 0 ? (counts.strawberry * 100 + priceS) : 0;
+    const totalR = counts.raspberry > 0 ? (counts.raspberry * 100 + priceR) : 0;
+    
+    document.getElementById("constructor-price").innerText = totalS + totalR;
+};
+
+// Добавление конструктора + СБРОС
+window.addConstructorToCart = function() {
+    const price = parseInt(document.getElementById("constructor-price").innerText);
+    if (price <= 0) {
+        tg.showAlert("Выберите хотя бы одну ягоду!");
+        return;
+    }
+
+    const chocS = document.getElementById("c-chocolate-strawberry").value;
+    const chocR = document.getElementById("c-chocolate-raspberry").value;
+
+    let details = [];
+    if (counts.strawberry > 0) details.push(`Клубника: ${counts.strawberry} шт (${chocS})`);
+    if (counts.raspberry > 0) details.push(`Малина: ${counts.raspberry} шт (${chocR})`);
+
+    cart.push({
+        id: Date.now(),
+        name: `Собранный микс`,
+        qty: 1,
+        price: price,
+        description: details.join(" + ")
+    });
+
+    renderCart();
+
+    // СБРОС СОСТОЯНИЯ
+    counts.strawberry = 0;
+    counts.raspberry = 0;
+    document.getElementById("c-chocolate-strawberry").selectedIndex = 0;
+    document.getElementById("c-chocolate-raspberry").selectedIndex = 0;
+    initPickers(); // Визуально вернет на 0
+    calcConstructor(); // Обнулит цену на экране
+
+    tg.showAlert("Микс добавлен в корзину!");
+};
+
+window.addToCart = function(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    const existing = cart.find(x => x.id === id && !x.description);
+    if (existing) existing.qty++;
+    else cart.push({ ...p, qty: 1 });
+    renderCart();
+};
+
+window.renderCart = function() {
+    const cartDiv = document.getElementById("cart");
+    const checkoutBtn = document.getElementById("main-checkout");
+    if (!cartDiv) return;
+
+    if (cart.length === 0) {
+        cartDiv.innerHTML = "<p style='text-align:center; color:#999; margin-bottom:15px;'>Корзина пуста</p>";
+        checkoutBtn.innerText = "Оформить заказ (0 ₽)";
+        return;
+    }
+
+    cartDiv.innerHTML = "";
+    let total = 0;
+
+    cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML = `
+            <div style="flex:1;">
+                <b style="color:var(--primary-color)">${item.name}</b><br>
+                ${item.description ? `<small style="color:#777;">${item.description}</small><br>` : ''}
+                <b>${item.qty} шт. — ${item.price * item.qty} ₽</b>
+            </div>
+            <button class="remove-btn" onclick="removeFromCart(${index})">×</button>
+        `;
+        cartDiv.appendChild(row);
+    });
+    
+    checkoutBtn.innerText = `Оформить заказ (${total} ₽)`;
+};
+
+window.removeFromCart = function(index) {
+    cart.splice(index, 1);
+    renderCart();
+};
+
 window.showModal = function(product) {
     document.getElementById("modal-title").innerText = product.name;
     document.getElementById("modal-desc").innerText = product.description || "";
@@ -96,86 +187,8 @@ window.closeModal = function() {
     document.getElementById("modal").style.display = "none";
 };
 
-// 6. Конструктор
-window.calcConstructor = function() {
-    const chocSelect = document.getElementById("c-chocolate");
-    const chocPrice = parseInt(chocSelect.options[chocSelect.selectedIndex].getAttribute('data-price') || 0);
-    const total = (counts.strawberry + counts.raspberry) * 100 + chocPrice;
-    document.getElementById("constructor-price").innerText = total;
-};
-
-window.addConstructorToCart = function() {
-    const price = parseInt(document.getElementById("constructor-price").innerText);
-    if (price <= 0) {
-        alert("Выберите ягоды!"); 
-        return;
-    }
-    const choc = document.getElementById("c-chocolate").value;
-    const item = {
-        id: Date.now(),
-        name: `Свой набор (${choc})`,
-        qty: 1,
-        price: price,
-        details: `Клубника: ${counts.strawberry}, Малина: ${counts.raspberry}`
-    };
-    cart.push(item);
-    renderCart();
-};
-
-// 7. Корзина
-window.addToCart = function(id) {
-    const p = products.find(x => x.id === id);
-    if (!p) return;
-    const existing = cart.find(x => x.id === id);
-    if (existing) existing.qty++;
-    else cart.push({ ...p, qty: 1 });
-    renderCart();
-};
-
-window.renderCart = function() {
-    const cartDiv = document.getElementById("cart");
-    const checkoutBtn = document.getElementById("main-checkout");
-    
-    if (!cartDiv || !checkoutBtn) return;
-
-    if (cart.length === 0) {
-        cartDiv.innerHTML = "<p style='text-align:center; color:#999;'>Корзина пуста</p>";
-        checkoutBtn.innerText = "Оформить заказ (0 ₽)";
-        return;
-    }
-
-    cartDiv.innerHTML = "";
-    let total = 0;
-
-    cart.forEach((item, index) => {
-        total += item.price * item.qty;
-        const row = document.createElement("div");
-        row.className = "cart-item";
-        row.innerHTML = `
-            <div>
-                <b>${item.name}</b><br>
-                <small>${item.qty} шт. — ${item.price * item.qty} ₽</small>
-            </div>
-            <button class="remove-btn" onclick="removeFromCart(${index})">×</button>
-        `;
-        cartDiv.appendChild(row);
-    });
-    
-    checkoutBtn.innerText = `Оформить заказ (${total} ₽)`;
-};
-
-window.removeFromCart = function(index) {
-    cart.splice(index, 1);
-    renderCart();
-};
-
-// 8. Отправка заказа
 window.checkout = function() {
-    if (cart.length === 0) {
-        if (tg.showAlert) tg.showAlert("Корзина пуста!");
-        else alert("Корзина пуста!");
-        return;
-    }
+    if (cart.length === 0) return tg.showAlert("Корзина пуста!");
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     tg.sendData(JSON.stringify({ items: cart, total: total }));
     tg.close();
