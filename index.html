@@ -8,18 +8,56 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <h1>🍓 Клубничный Магазин</h1>
-
-    <div id="catalog" class="catalog">
-        <!-- Сюда JS вставит товары -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('catalog-tab')">Наборы</button>
+        <button class="tab-btn" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
     </div>
 
+    <!-- Вкладка 1: Готовые наборы -->
+    <div id="catalog-tab" class="tab-content active">
+        <div id="catalog" class="catalog"></div>
+    </div>
+
+    <!-- Вкладка 2: Конструктор -->
+    <div id="constructor-tab" class="tab-content">
+        <div class="constructor-card">
+            <h3>Создай свой набор</h3>
+            <div class="input-group">
+                <label>Клубника (шт): <input type="number" id="c-strawberry" value="0" min="0" onchange="calcConstructor()"></label>
+            </div>
+            <div class="input-group">
+                <label>Малина (шт): <input type="number" id="c-raspberry" value="0" min="0" onchange="calcConstructor()"></label>
+            </div>
+            <div class="input-group">
+                <label>Шоколад:</label>
+                <select id="c-chocolate" onchange="calcConstructor()">
+                    <option value="milk" data-price="0">Молочный</option>
+                    <option value="dark" data-price="0">Темный</option>
+                    <option value="dubai" data-price="500">Дубайский (+500 ₽)</option>
+                    <option value="kinder" data-price="200">Киндер (+200 ₽)</option>
+                </select>
+            </div>
+            <div class="total-price">Итого: <span id="constructor-price">0</span> ₽</div>
+            <button class="checkout" onclick="addConstructorToCart()">Добавить в корзину</button>
+        </div>
+    </div>
+
+    <!-- Корзина (общая) -->
     <div class="cart-section">
         <h3>🛒 Корзина</h3>
-        <div id="cart">
-            <p>Корзина пуста</p>
+        <div id="cart"><p>Корзина пуста</p></div>
+        <button class="checkout" id="main-checkout" onclick="checkout()">Оформить заказ</button>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-desc"></p>
+            <p><b id="modal-price"></b></p>
+            <button class="checkout" id="modal-add-btn">Добавить</button>
         </div>
-        <button class="checkout" onclick="checkout()">Оформить заказ</button>
     </div>
 
     <script src="app.js"></script>
