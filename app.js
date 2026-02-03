@@ -75,3 +75,7 @@ function checkout() {
 
 // init
 renderCatalog();
+
+fetch('catalog.json')
+  .then(res => res.json())
+  .then(data => console.log(data));
