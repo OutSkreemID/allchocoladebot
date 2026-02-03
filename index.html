@@ -19,28 +19,28 @@
     </div>
 
     <!-- Вкладка 2: Конструктор -->
-    <div id="constructor-tab" class="tab-content">
-        <div class="constructor-card">
-            <h3>Создай свой набор</h3>
-            <div class="input-group">
-                <label>Клубника (шт): <input type="number" id="c-strawberry" value="0" min="0" onchange="calcConstructor()"></label>
-            </div>
-            <div class="input-group">
-                <label>Малина (шт): <input type="number" id="c-raspberry" value="0" min="0" onchange="calcConstructor()"></label>
-            </div>
-            <div class="input-group">
-                <label>Шоколад:</label>
-                <select id="c-chocolate" onchange="calcConstructor()">
-                    <option value="milk" data-price="0">Молочный</option>
-                    <option value="dark" data-price="0">Темный</option>
-                    <option value="dubai" data-price="500">Дубайский (+500 ₽)</option>
-                    <option value="kinder" data-price="200">Киндер (+200 ₽)</option>
-                </select>
-            </div>
-            <div class="total-price">Итого: <span id="constructor-price">0</span> ₽</div>
-            <button class="checkout" onclick="addConstructorToCart()">Добавить в корзину</button>
-        </div>
+<div class="constructor-card">
+    <h3>Создай свой набор</h3>
+    <label>Количество клубники:</label>
+    <div id="picker-strawberry" class="scroll-picker">
+        <!-- Генерируется через JS -->
     </div>
+
+    <label>Количество малины:</label>
+    <div id="picker-raspberry" class="scroll-picker">
+        <!-- Генерируется через JS -->
+    </div>
+    
+    <label>Шоколад:</label>
+    <select id="c-chocolate" onchange="calcConstructor()">
+        <option value="Молочный" data-price="0">Молочный</option>
+        <option value="Темный" data-price="0">Темный</option>
+        <option value="Дубайский" data-price="500">Дубайский (+500 ₽)</option>
+        <option value="Киндер" data-price="200">Киндер (+200 ₽)</option>
+    </select>
+    <div class="total-price">Итого: <span id="constructor-price">0</span> ₽</div>
+    <button class="checkout" onclick="addConstructorToCart()">Добавить в корзину</button>
+</div>
 
     <!-- Корзина (общая) -->
     <div class="cart-section">
