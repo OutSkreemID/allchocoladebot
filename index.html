@@ -18,42 +18,35 @@
         <div id="catalog" class="catalog">Загрузка...</div>
     </div>
 
-    <!-- Вкладка 2: Конструктор -->
-    <div id="constructor-tab" class="tab-content">
-        <div class="constructor-card">
-            <h3>Создай свой микс</h3>
-            
-            <!-- Клубника -->
-            <div class="constructor-group">
-                <label>🍓 Клубника (шт):</label>
-                <div id="picker-strawberry" class="scroll-picker"></div>
-                <select id="c-chocolate-strawberry" onchange="calcConstructor()">
-                    <option value="Молочный" data-price="0">В молочном шоколаде (+0 ₽)</option>
-                    <option value="Темный" data-price="0">В темном шоколаде (+0 ₽)</option>
-                    <option value="Дубайский" data-price="500">В дубайском шоколаде (+500 ₽)</option>
-                    <option value="Киндер" data-price="200">В шоколаде Киндер (+200 ₽)</option>
-                </select>
-            </div>
+<!-- Вкладка Конструктор -->
+<div id="constructor-tab" class="tab-content">
+    <div class="constructor-card">
+        <h3>Создай свой микс</h3>
+        <label>🍓 Клубника:</label>
+        <div id="picker-strawberry" class="scroll-picker"></div>
+        <select id="c-chocolate-strawberry" onchange="calcConstructor()">
+            <option value="White">Белый шоколад</option>
+            <option value="Milk">Молочный</option>
+            <option value="Dark">Темный</option>
+            <option value="Dubai">Дубайский</option>
+            <option value="Kinder">Киндер</option>
+        </select>
 
-            <hr class="separator">
+        <hr class="separator">
 
-            <!-- Малина -->
-            <div class="constructor-group">
-                <label>🫐 Малина (шт):</label>
-                <div id="picker-raspberry" class="scroll-picker"></div>
-                <select id="c-chocolate-raspberry" onchange="calcConstructor()">
-                    <option value="Молочный" data-price="0">В молочном шоколаде (+0 ₽)</option>
-                    <option value="Темный" data-price="0">В темном шоколаде (+0 ₽)</option>
-                    <option value="Дубайский" data-price="500">В дубайском шоколаде (+500 ₽)</option>
-                    <option value="Киндер" data-price="200">В шоколаде Киндер (+200 ₽)</option>
-                </select>
-            </div>
+        <label>🫐 Малина:</label>
+        <div id="picker-raspberry" class="scroll-picker"></div>
+        <select id="c-chocolate-raspberry" onchange="calcConstructor()">
+            <option value="White">Белый шоколад</option>
+            <option value="Milk">Молочный</option>
+            <option value="Dark">Темный</option>
+            <option value="Kinder">Киндер</option>
+        </select>
 
-            <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
-            <button class="checkout-alt" onclick="addConstructorToCart()">Добавить этот микс</button>
-        </div>
+        <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
+        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс</button>
     </div>
-
+</div>
     <!-- Корзина -->
     <div class="cart-section">
         <h3>🛒 Ваша корзина</h3>
