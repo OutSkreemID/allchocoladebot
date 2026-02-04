@@ -44,21 +44,25 @@ window.openTab = (id) => {
 };
 
 window.calcConstructor = () => {
-    const chocS = document.getElementById("c-chocolate-strawberry").value;
+    // Если конфиг еще не загрузился, выходим
+    if (!config.berry_base_price) return;
+
+    // Получаем выбранный шоколад (value из select)
+    const chocS = document.getElementById("c-chocolate-strawberry").value; // 'milk', 'dubai' и т.д.
     const chocR = document.getElementById("c-chocolate-raspberry").value;
-    
-    // Наценка из конфига (ключи: strawberry_dubai_extra и т.д.)
-    const getExtra = (berry, type) => {
-        const key = `${berry}_${type.toLowerCase()}_extra`;
-        return config[key] || 0;
-    };
 
-    const priceS = counts.strawberry * (config.berry_base_price + getExtra('strawberry', chocS));
-    const priceR = counts.raspberry * (config.berry_base_price + getExtra('raspberry', chocR));
+    // Ищем наценку в конфиге по ключу (например, strawberry_dubai_extra)
+    const extraS = config[`strawberry_${chocS}_extra`] || 0;
+    const extraR = config[`raspberry_${chocR}_extra`] || 0;
+
+    // Считаем цену за каждую группу: (База + Наценка) * Кол-во
+    const totalS = counts.strawberry * (config.berry_base_price + extraS);
+    const totalR = counts.raspberry * (config.berry_base_price + extraR);
     
-    document.getElementById("constructor-price").innerText = priceS + priceR;
+    // Выводим общую сумму
+    const finalTotal = totalS + totalR;
+    document.getElementById("constructor-price").innerText = finalTotal;
 };
-
 window.addConstructorToCart = () => {
     const total = parseInt(document.getElementById("constructor-price").innerText);
     if (total <= 0) return tg.showAlert("Выберите ягоды!");

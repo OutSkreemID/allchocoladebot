@@ -23,13 +23,7 @@
       "name": "Банановый десерт",
       "price": 950,
       "description": "Слайсы спелого банана в темном шоколаде с дробленым фундуком."
-    },
-    {
-  "berry_base_price": 100,
-  "strawberry_dubai_extra": 50,
-  "strawberry_kinder_extra": 20,
-  "raspberry_kinder_extra": 20
-}
+    }
   ]
 }
 

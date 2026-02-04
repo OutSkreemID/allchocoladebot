@@ -22,29 +22,32 @@
 <div id="constructor-tab" class="tab-content">
     <div class="constructor-card">
         <h3>Создай свой микс</h3>
+        
+        <!-- Клубника -->
         <label>🍓 Клубника:</label>
         <div id="picker-strawberry" class="scroll-picker"></div>
         <select id="c-chocolate-strawberry" onchange="calcConstructor()">
-            <option value="White">Белый шоколад</option>
-            <option value="Milk">Молочный</option>
-            <option value="Dark">Темный</option>
-            <option value="Dubai">Дубайский</option>
-            <option value="Kinder">Киндер</option>
+            <option value="milk">Молочный шоколад (+0 ₽)</option>
+            <option value="dark">Темный шоколад (+0 ₽)</option>
+            <option value="white">Белый шоколад (+0 ₽)</option>
+            <option value="dubai">Дубайский шоколад (+50 ₽/шт)</option>
+            <option value="kinder">Киндер шоколад (+20 ₽/шт)</option>
         </select>
 
         <hr class="separator">
 
+        <!-- Малина -->
         <label>🫐 Малина:</label>
         <div id="picker-raspberry" class="scroll-picker"></div>
         <select id="c-chocolate-raspberry" onchange="calcConstructor()">
-            <option value="White">Белый шоколад</option>
-            <option value="Milk">Молочный</option>
-            <option value="Dark">Темный</option>
-            <option value="Kinder">Киндер</option>
+            <option value="milk">Молочный шоколад (+0 ₽)</option>
+            <option value="dark">Темный шоколад (+0 ₽)</option>
+            <option value="white">Белый шоколад (+0 ₽)</option>
+            <option value="kinder">Киндер шоколад (+20 ₽/шт)</option>
         </select>
 
         <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
-        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс</button>
+        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
     </div>
 </div>
     <!-- Корзина -->
