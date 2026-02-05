@@ -13,39 +13,37 @@
         <button class="tab-btn" id="btn-constructor" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
     </div>
 
-    <!-- Вкладка 1: Готовые наборы -->
     <div id="catalog-tab" class="tab-content active">
         <div id="catalog" class="catalog">Загрузка...</div>
     </div>
 
-<!-- Вкладка Конструктор -->
-<div id="constructor-tab" class="tab-content">
-    <div class="constructor-card">
-        <h3>Создай свой микс</h3>
-        
-        <!-- Клубника -->
-        <label>🍓 Клубника:</label>
-        <div id="picker-strawberry" class="scroll-picker"></div>
-<select id="c-chocolate-strawberry" onchange="calcConstructor()">
-    <!-- Будет заполнено из JS -->
-</select>
+    <div id="constructor-tab" class="tab-content">
+        <div class="constructor-card">
+            <h3>Создай свой микс</h3>
+            
+            <!-- Клубника -->
+            <label>🍓 Клубника:</label>
+            <div id="picker-strawberry" class="scroll-picker"></div>
+            <select id="c-chocolate-strawberry" onchange="calcConstructor()"></select>
 
-<select id="c-chocolate-raspberry" onchange="calcConstructor()">
-    <!-- Будет заполнено из JS -->
-</select>
+            <hr class="separator">
 
-        <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
-        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
+            <!-- Малина (ВОССТАНОВЛЕНО) -->
+            <label>🫐 Малина:</label>
+            <div id="picker-raspberry" class="scroll-picker"></div>
+            <select id="c-chocolate-raspberry" onchange="calcConstructor()"></select>
+
+            <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
+            <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
+        </div>
     </div>
-</div>
-    <!-- Корзина -->
+
     <div class="cart-section">
         <h3>🛒 Ваша корзина</h3>
         <div id="cart"></div>
         <button class="checkout" id="main-checkout" onclick="checkout()">Оформить заказ (0 ₽)</button>
     </div>
 
-    <!-- Модалка -->
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -55,7 +53,6 @@
             <button class="checkout" id="modal-add-btn">Добавить в корзину</button>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>

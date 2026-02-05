@@ -162,42 +162,29 @@ function renderConstructorOptions() {
 // Функция загрузки данных с API на Railway
 async function loadData() {
     try {
-        console.log("Попытка загрузки данных...");
-        
+        // Добавляем временную метку, чтобы избежать кеширования
+        const v = Date.now();
         const [pRes, cRes] = await Promise.all([
-            fetch(`${API_BASE}/api/products`),
-            fetch(`${API_BASE}/api/config`)
+            fetch(`${API_BASE}/api/products?v=${v}`),
+            fetch(`${API_BASE}/api/config?v=${v}`)
         ]);
 
-        if (!pRes.ok || !cRes.ok) {
-            throw new Error(`Ошибка сервера: ${pRes.status} / ${cRes.status}`);
-        }
-
-        const pData = await pRes.json();
-        const cData = await cRes.json();
-
-        console.log("Данные загружены:", pData, cData);
-
-        products = pData.products || [];
-        config = cData || {};
+        products = (await pRes.json()).products || [];
+        config = await cRes.json() || {};
 
         renderCatalog();
         renderCart();
-        calcConstructor()
-            config = cData;
-    renderConstructorOptions(); // <--- Добавь это
-    calcConstructor();
-
+        renderConstructorOptions();
+        calcConstructor();
     } catch (e) {
         console.error("Критическая ошибка loadData:", e);
-        // Если API не ответило, выводим уведомление на экран
-        document.getElementById("catalog").innerHTML = "<p style='color:red; padding:20px;'>Ошибка связи с сервером. Попробуйте обновить страницу.</p>";
+        document.getElementById("catalog").innerHTML = "<p style='color:red; text-align:center;'>Ошибка загрузки данных</p>";
     }
 }
 // Функция изменения цены товара (можно вызывать из консоли для теста)
 async function apiUpdateProductPrice(id, newPrice) {
     try {
-        const response = await fetch(`${API_BASE}/api/update-product`, {
+        const response = await fetch(`${API_BASE}/api/update-products`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id, price: newPrice })
@@ -219,3 +206,33 @@ async function apiUpdateConfig(key, value) {
         if (result.status === 'ok') loadData();
     } catch (e) { console.error("Ошибка обновления конфига:", e); }
 }
+function renderConstructorOptions() {
+    const sSelect = document.getElementById("c-chocolate-strawberry");
+    const rSelect = document.getElementById("c-chocolate-raspberry");
+    if (!sSelect || !rSelect) return;
+
+    const chocTypes = ["milk", "dark", "white", "dubai", "kinder"];
+    const names = { milk: "Молочный", dark: "Темный", white: "Белый", dubai: "Дубайский", kinder: "Киндер" };
+
+    sSelect.innerHTML = ""; rSelect.innerHTML = "";
+
+    chocTypes.forEach(t => {
+        const exS = config[`strawberry_${t}_extra`];
+        const exR = config[`raspberry_${t}_extra`];
+        if (exS !== undefined) sSelect.innerHTML += `<option value="${t}">${names[t]} (+${exS}₽/шт)</option>`;
+        if (exR !== undefined) rSelect.innerHTML += `<option value="${t}">${names[t]} (+${exR}₽/шт)</option>`;
+    });
+}
+
+window.calcConstructor = () => {
+    if (!config.berry_base_price) return;
+    const sChoc = document.getElementById("c-chocolate-strawberry").value;
+    const rChoc = document.getElementById("c-chocolate-raspberry").value;
+    
+    const priceS = counts.strawberry * (config.berry_base_price + (config[`strawberry_${sChoc}_extra`] || 0));
+    const priceR = counts.raspberry * (config.berry_base_price + (config[`raspberry_${rChoc}_extra`] || 0));
+    
+    const total = priceS + priceR;
+    document.getElementById("constructor-price").innerText = total;
+    return total;
+};
