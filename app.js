@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadData();
 });
 // URL вашего бота на Railway
-const API_BASE = "https://d42d6ef8-4ac4-4136-ab41-2bc3d4e6d519.up.railway.app";
+const API_BASE = "https://vsevshokoladebot-production.up.railway.app";
 
 function initPickers() {
     ['strawberry', 'raspberry'].forEach(type => {
@@ -128,31 +128,72 @@ window.checkout = () => {
     tg.sendData(JSON.stringify({ items: cart, total: cart.reduce((s, i) => s + i.price*i.qty, 0) }));
     tg.close();
 };
+function renderConstructorOptions() {
+    const strawberrySelect = document.getElementById("c-chocolate-strawberry");
+    const raspberrySelect = document.getElementById("c-chocolate-raspberry");
+    
+    if (!strawberrySelect || !raspberrySelect) return;
 
+    // Список доступных типов шоколада (можно тоже вынести в конфиг)
+    // Но пока сделаем на основе ключей, которые есть в config
+    const chocTypes = ["milk", "dark", "white", "dubai", "kinder"]; 
+    
+    const translate = {
+        milk: "Молочный", dark: "Темный", white: "Белый",
+        dubai: "Дубайский", kinder: "Киндер"
+    };
+
+    strawberrySelect.innerHTML = "";
+    raspberrySelect.innerHTML = "";
+
+    chocTypes.forEach(type => {
+        // Проверяем, есть ли наценка для этого шоколада в конфиге
+        const extraS = config[`strawberry_${type}_extra`];
+        const extraR = config[`raspberry_${type}_extra`];
+
+        if (extraS !== undefined) {
+            strawberrySelect.innerHTML += `<option value="${type}">${translate[type] || type} (+${extraS} ₽)</option>`;
+        }
+        if (extraR !== undefined) {
+            raspberrySelect.innerHTML += `<option value="${type}">${translate[type] || type} (+${extraR} ₽)</option>`;
+        }
+    });
+}
 // Функция загрузки данных с API на Railway
 async function loadData() {
     try {
+        console.log("Попытка загрузки данных...");
+        
         const [pRes, cRes] = await Promise.all([
             fetch(`${API_BASE}/api/products`),
             fetch(`${API_BASE}/api/config`)
         ]);
 
+        if (!pRes.ok || !cRes.ok) {
+            throw new Error(`Ошибка сервера: ${pRes.status} / ${cRes.status}`);
+        }
+
         const pData = await pRes.json();
         const cData = await cRes.json();
 
-        // Записываем данные в глобальные переменные
-        products = pData.products;
-        config = cData;
+        console.log("Данные загружены:", pData, cData);
 
-        // Перерисовываем интерфейс
+        products = pData.products || [];
+        config = cData || {};
+
         renderCatalog();
         renderCart();
-        calcConstructor();
+        calcConstructor()
+            config = cData;
+    renderConstructorOptions(); // <--- Добавь это
+    calcConstructor();
+
     } catch (e) {
-        console.error("Ошибка загрузки данных из API:", e);
+        console.error("Критическая ошибка loadData:", e);
+        // Если API не ответило, выводим уведомление на экран
+        document.getElementById("catalog").innerHTML = "<p style='color:red; padding:20px;'>Ошибка связи с сервером. Попробуйте обновить страницу.</p>";
     }
 }
-
 // Функция изменения цены товара (можно вызывать из консоли для теста)
 async function apiUpdateProductPrice(id, newPrice) {
     try {

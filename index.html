@@ -26,25 +26,13 @@
         <!-- Клубника -->
         <label>🍓 Клубника:</label>
         <div id="picker-strawberry" class="scroll-picker"></div>
-        <select id="c-chocolate-strawberry" onchange="calcConstructor()">
-            <option value="milk">Молочный шоколад (+0 ₽)</option>
-            <option value="dark">Темный шоколад (+0 ₽)</option>
-            <option value="white">Белый шоколад (+0 ₽)</option>
-            <option value="dubai">Дубайский шоколад (+50 ₽/шт)</option>
-            <option value="kinder">Киндер шоколад (+20 ₽/шт)</option>
-        </select>
+<select id="c-chocolate-strawberry" onchange="calcConstructor()">
+    <!-- Будет заполнено из JS -->
+</select>
 
-        <hr class="separator">
-
-        <!-- Малина -->
-        <label>🫐 Малина:</label>
-        <div id="picker-raspberry" class="scroll-picker"></div>
-        <select id="c-chocolate-raspberry" onchange="calcConstructor()">
-            <option value="milk">Молочный шоколад (+0 ₽)</option>
-            <option value="dark">Темный шоколад (+0 ₽)</option>
-            <option value="white">Белый шоколад (+0 ₽)</option>
-            <option value="kinder">Киндер шоколад (+20 ₽/шт)</option>
-        </select>
+<select id="c-chocolate-raspberry" onchange="calcConstructor()">
+    <!-- Будет заполнено из JS -->
+</select>
 
         <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
         <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
