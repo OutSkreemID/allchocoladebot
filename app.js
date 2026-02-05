@@ -128,3 +128,53 @@ window.checkout = () => {
     tg.sendData(JSON.stringify({ items: cart, total: cart.reduce((s, i) => s + i.price*i.qty, 0) }));
     tg.close();
 };
+
+// Функция загрузки данных с API на Railway
+async function loadData() {
+    try {
+        const [pRes, cRes] = await Promise.all([
+            fetch(`${API_BASE}/api/products`),
+            fetch(`${API_BASE}/api/config`)
+        ]);
+
+        const pData = await pRes.json();
+        const cData = await cRes.json();
+
+        // Записываем данные в глобальные переменные
+        products = pData.products;
+        config = cData;
+
+        // Перерисовываем интерфейс
+        renderCatalog();
+        renderCart();
+        calcConstructor();
+    } catch (e) {
+        console.error("Ошибка загрузки данных из API:", e);
+    }
+}
+
+// Функция изменения цены товара (можно вызывать из консоли для теста)
+async function apiUpdateProductPrice(id, newPrice) {
+    try {
+        const response = await fetch(`${API_BASE}/api/update-product`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, price: newPrice })
+        });
+        const result = await response.json();
+        if (result.status === 'ok') loadData(); // Обновляем данные на экране
+    } catch (e) { console.error("Ошибка обновления товара:", e); }
+}
+
+// Функция изменения цен конструктора
+async function apiUpdateConfig(key, value) {
+    try {
+        const response = await fetch(`${API_BASE}/api/update-config`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: key, value: value })
+        });
+        const result = await response.json();
+        if (result.status === 'ok') loadData();
+    } catch (e) { console.error("Ошибка обновления конфига:", e); }
+}
