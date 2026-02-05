@@ -6,22 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initPickers();
     loadData();
 });
-
-async function loadData() {
-    try {
-        // Добавляем случайное число в конец URL, чтобы браузер не кешировал старые цены
-        const cacheBuster = `?v=${Date.now()}`;
-        const [pRes, cRes] = await Promise.all([
-            fetch('products.json' + cacheBuster), 
-            fetch('constructor_config.json' + cacheBuster)
-        ]);
-        products = (await pRes.json()).products;
-        config = await cRes.json();
-        renderCatalog();
-        renderCart();
-        calcConstructor();
-    } catch (e) { console.error("Ошибка загрузки данных", e); }
-}
+// URL вашего бота на Railway
+const API_BASE = "https://d42d6ef8-4ac4-4136-ab41-2bc3d4e6d519.up.railway.app";
 
 function initPickers() {
     ['strawberry', 'raspberry'].forEach(type => {
