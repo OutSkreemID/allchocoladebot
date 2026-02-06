@@ -45,9 +45,9 @@ function renderDynamicConstructor() {
     container.innerHTML = "";
     config.items.forEach((item, index) => {
         // Фильтруем шоколад: берем только тот, чьи ID есть в списке allowed_chocolates этой ягоды
-        const availableChoc = config.chocolates.filter(c => 
-            item.allowed_chocolates ? item.allowed_chocolates.includes(c.id) : true
-        );
+        const availableChoc = (config.chocolates || []).filter(c => 
+    (item.allowed_chocolates || []).includes(c.id)
+);
 
         const block = document.createElement("div");
         block.className = "constructor-group";
