@@ -28,15 +28,24 @@
 
             <hr class="separator">
 
-            <!-- Малина (ВОССТАНОВЛЕНО) -->
-            <label>🫐 Малина:</label>
+            <!-- Малина -->
+            <label>🔴 Малина:</label>
             <div id="picker-raspberry" class="scroll-picker"></div>
             <select id="c-chocolate-raspberry" onchange="calcConstructor()"></select>
+            
+            <hr class="separator">
+            
+            <!-- Голубика -->
+            <label>🫐 Голубика:</label>
+            <div id="picker-blueberry" class="scroll-picker"></div>
+            <select id="c-chocolate-blueberry" onchange="calcConstructor()"></select> 
 
             <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
             <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
         </div>
     </div>
+                   
+
 
     <div class="cart-section">
         <h3>🛒 Ваша корзина</h3>

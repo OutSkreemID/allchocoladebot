@@ -1,5 +1,5 @@
 const tg = window.Telegram.WebApp;
-let products = [], cart = [], counts = { strawberry: 0, raspberry: 0 }, config = {};
+let products = [], cart = [], counts = { strawberry: 0, raspberry: 0, blueberry: 0 }, config = {};
 
 document.addEventListener('DOMContentLoaded', () => {
     tg.expand();
@@ -10,71 +10,107 @@ document.addEventListener('DOMContentLoaded', () => {
 const API_BASE = "https://vsevshokoladebot-production.up.railway.app";
 
 function initPickers() {
-    ['strawberry', 'raspberry'].forEach(type => {
+    // Настройки для каждого типа ягод
+    const settings = {
+        strawberry: { max: 20, step: 1 },    // 0, 1, 2... 20
+        raspberry: { max: 100, step: 10 },   // 0, 10, 20... 100
+        blueberry: { max: 100, step: 20 }    // 0, 20, 40... 100
+    };
+
+    // Проходим циклом по настройкам
+    Object.keys(settings).forEach(type => {
         const p = document.getElementById(`picker-${type}`);
-        p.innerHTML = "";
-        for (let i = 0; i <= 20; i++) {
+        if (!p) return; // Если блока нет в HTML, просто пропускаем
+        
+        p.innerHTML = ""; // Очищаем старые цифры
+        const { max, step } = settings[type];
+
+        // Генерируем цифры с нужным шагом
+        for (let i = 0; i <= max; i += step) {
             const el = document.createElement('div');
+            // Если текущее кол-во совпадает с i, помечаем как выбранное (нужно для сброса в 0)
             el.className = `picker-item ${counts[type] === i ? 'selected' : ''}`;
             el.innerText = i;
+            
             el.onclick = () => {
-                counts[type] = i;
+                counts[type] = i; // Записываем выбранное число
+                // Убираем выделение у всех соседних цифр в этом пикере
                 p.querySelectorAll('.picker-item').forEach(item => item.classList.remove('selected'));
+                // Выделяем текущую цифру
                 el.classList.add('selected');
+                // Пересчитываем общую цену
                 calcConstructor();
             };
             p.appendChild(el);
         }
     });
 }
-
+// --- 4. ЛОГИКА КОНСТРУКТОРА ---
 window.calcConstructor = () => {
-    if (!config.berry_base_price) return;
+    if (!config.berry_base_price) return 0;
 
-    const chocS = document.getElementById("c-chocolate-strawberry").value;
-    const chocR = document.getElementById("c-chocolate-raspberry").value;
+    const sChoc = document.getElementById("c-chocolate-strawberry").value;
+    const rChoc = document.getElementById("c-chocolate-raspberry").value;
+    const bChoc = document.getElementById("c-chocolate-blueberry").value;
     
-    // Получаем наценку из конфига
-    const extraS = config[`strawberry_${chocS}_extra`] || 0;
-    const extraR = config[`raspberry_${chocR}_extra`] || 0;
-
-    // Считаем цену за каждую ягоду отдельно (База + Наценка)
-    const priceS = counts.strawberry * (config.berry_base_price + extraS);
-    const priceR = counts.raspberry * (config.berry_base_price + extraR);
+    const priceS = counts.strawberry * (config.berry_base_price + (config[`strawberry_${sChoc}_extra`] || 0));
+    const priceR = counts.raspberry * (config.berry_base_price + (config[`raspberry_${rChoc}_extra`] || 0));
+    const priceB = counts.blueberry * (config.berry_base_price + (config[`blueberry_${bChoc}_extra`] || 0));
     
-    const total = priceS + priceR;
+    const total = priceS + priceR + priceB;
     document.getElementById("constructor-price").innerText = total;
-    return { total, detailsS: { count: counts.strawberry, choc: chocS }, detailsR: { count: counts.raspberry, choc: chocR } };
+    return total;
 };
 
 window.addConstructorToCart = () => {
-    const calculation = window.calcConstructor();
-    if (!calculation || calculation.total <= 0) return tg.showAlert("Выберите ягоды!");
+    const total = window.calcConstructor();
+    if (total <= 0) return tg.showAlert("Выберите хотя бы одну ягоду!");
 
     let desc = [];
-    if (counts.strawberry > 0) desc.push(`Клубника: ${counts.strawberry}шт (${document.getElementById("c-chocolate-strawberry").options[document.getElementById("c-chocolate-strawberry").selectedIndex].text})`);
-    if (counts.raspberry > 0) desc.push(`Малина: ${counts.raspberry}шт (${document.getElementById("c-chocolate-raspberry").options[document.getElementById("c-chocolate-raspberry").selectedIndex].text})`);
+    const berryNames = { strawberry: "Клубника", raspberry: "Малина", blueberry: "Голубика" };
+
+    Object.keys(berryNames).forEach(key => {
+        if (counts[key] > 0) {
+            const select = document.getElementById(`c-chocolate-${key}`);
+            const chocText = select.options[select.selectedIndex].text;
+            desc.push(`${berryNames[key]}: ${counts[key]}шт (${chocText})`);
+        }
+    });
 
     cart.push({ 
         id: Date.now(), 
         name: "Микс собранный", 
         qty: 1, 
-        price: calculation.total, 
+        price: total, 
         description: desc.join(" + ") 
     });
     
-    counts = { strawberry: 0, raspberry: 0 };
+    // Сброс всего
+    counts = { strawberry: 0, raspberry: 0, blueberry: 0 };
     initPickers();
     calcConstructor();
     renderCart();
     tg.showAlert("Добавлено в корзину!");
 };
 
+// --- 5. ЛОГИКА КОРЗИНЫ (С УДАЛЕНИЕМ) ---
+window.removeFromCart = (idx) => {
+    cart.splice(idx, 1);
+    renderCart();
+};
+
 window.renderCart = () => {
     const div = document.getElementById("cart");
     const checkoutBtn = document.getElementById("main-checkout");
-    div.innerHTML = cart.length ? "" : "<p style='text-align:center;color:#999'>Корзина пуста</p>";
-    
+    if (!div) return;
+
+    if (cart.length === 0) {
+        div.innerHTML = "<p style='text-align:center;color:#999'>Корзина пуста</p>";
+        checkoutBtn.innerText = "Оформить заказ (0 ₽)";
+        return;
+    }
+
+    div.innerHTML = "";
     let total = 0;
     cart.forEach((item, idx) => {
         total += item.price * item.qty;
@@ -84,16 +120,16 @@ window.renderCart = () => {
             <div style="flex:1">
                 <b>${item.name}</b><br>
                 <small>${item.description || ''}</small><br>
-                <b>${item.price} ₽</b>
+                <b>${item.price * item.qty} ₽</b>
             </div>
-            <button class="remove-btn" onclick="removeFromCart(${idx})">×</button>
+            <button class="remove-btn" onclick="window.removeFromCart(${idx})">×</button>
         `;
         div.appendChild(row);
     });
     checkoutBtn.innerText = `Оформить заказ (${total} ₽)`;
 };
 
-// Остальные функции (renderCatalog, addToCart, removeFromCart, checkout, openTab) остаются такими же
+// --- 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
 window.openTab = (id) => {
     document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -128,6 +164,8 @@ window.checkout = () => {
     tg.sendData(JSON.stringify({ items: cart, total: cart.reduce((s, i) => s + i.price*i.qty, 0) }));
     tg.close();
 };
+
+// 3. ОТРИСОВКА ОПЦИЙ ШОКОЛАДА
 function renderConstructorOptions() {
     const strawberrySelect = document.getElementById("c-chocolate-strawberry");
     const raspberrySelect = document.getElementById("c-chocolate-raspberry");
@@ -150,7 +188,7 @@ function renderConstructorOptions() {
         // Проверяем, есть ли наценка для этого шоколада в конфиге
         const extraS = config[`strawberry_${type}_extra`];
         const extraR = config[`raspberry_${type}_extra`];
-
+        const extraB = config[`blueberry_${type}_extra`]
         if (extraS !== undefined) {
             strawberrySelect.innerHTML += `<option value="${type}">${translate[type] || type} (+${extraS} ₽)</option>`;
         }
@@ -159,7 +197,7 @@ function renderConstructorOptions() {
         }
     });
 }
-// Функция загрузки данных с API на Railway
+// 2. ЗАГРУЗКА ДАННЫХ с API на Railway
 async function loadData() {
     try {
         // Добавляем временную метку, чтобы избежать кеширования
