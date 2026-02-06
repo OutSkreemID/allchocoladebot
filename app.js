@@ -44,7 +44,11 @@ function renderDynamicConstructor() {
 
     container.innerHTML = "";
     config.items.forEach((item, index) => {
-        // Создаем HTML структуру для каждой ягоды
+        // Фильтруем шоколад: берем только тот, чьи ID есть в списке allowed_chocolates этой ягоды
+        const availableChoc = config.chocolates.filter(c => 
+            item.allowed_chocolates ? item.allowed_chocolates.includes(c.id) : true
+        );
+
         const block = document.createElement("div");
         block.className = "constructor-group";
         block.innerHTML = `
@@ -53,7 +57,7 @@ function renderDynamicConstructor() {
             </label>
             <div id="picker-${item.id}" class="scroll-picker"></div>
             <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
-                ${config.chocolates.map(c => `
+                ${availableChoc.map(c => `
                     <option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>
                 `).join('')}
             </select>
@@ -61,10 +65,7 @@ function renderDynamicConstructor() {
         `;
         container.appendChild(block);
 
-        // Инициализируем counts для этой позиции
         if (counts[item.id] === undefined) counts[item.id] = 0;
-
-        // Рисуем крутилку (пикер) для этой ягоды
         renderPicker(item);
     });
     calcConstructor();
