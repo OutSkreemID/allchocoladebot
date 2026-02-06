@@ -1,99 +1,144 @@
 const tg = window.Telegram.WebApp;
-let products = [], cart = [], counts = { strawberry: 0, raspberry: 0, blueberry: 0 }, config = {};
-
-document.addEventListener('DOMContentLoaded', () => {
-    tg.expand();
-    initPickers();
-    loadData();
-});
-// URL вашего бота на Railway
 const API_BASE = "https://vsevshokoladebot-production.up.railway.app";
 
-function initPickers() {
-    // Настройки для каждого типа ягод
-    const settings = {
-        strawberry: { max: 20, step: 1 },    // 0, 1, 2... 20
-        raspberry: { max: 100, step: 10 },   // 0, 10, 20... 100
-        blueberry: { max: 100, step: 20 }    // 0, 20, 40... 100
-    };
+let products = []; // Готовые наборы
+let cart = [];     // Корзина
+let config = {};   // Конфиг конструктора (ягоды и шоколад)
+let counts = {};   // Выбранные количества в конструкторе
 
-    // Проходим циклом по настройкам
-    Object.keys(settings).forEach(type => {
-        const p = document.getElementById(`picker-${type}`);
-        if (!p) return; // Если блока нет в HTML, просто пропускаем
-        
-        p.innerHTML = ""; // Очищаем старые цифры
-        const { max, step } = settings[type];
+// --- 1. ЗАПУСК ПРИЛОЖЕНИЯ ---
+document.addEventListener('DOMContentLoaded', () => {
+    tg.expand();
+    loadData();
+});
 
-        // Генерируем цифры с нужным шагом
-        for (let i = 0; i <= max; i += step) {
-            const el = document.createElement('div');
-            // Если текущее кол-во совпадает с i, помечаем как выбранное (нужно для сброса в 0)
-            el.className = `picker-item ${counts[type] === i ? 'selected' : ''}`;
-            el.innerText = i;
-            
-            el.onclick = () => {
-                counts[type] = i; // Записываем выбранное число
-                // Убираем выделение у всех соседних цифр в этом пикере
-                p.querySelectorAll('.picker-item').forEach(item => item.classList.remove('selected'));
-                // Выделяем текущую цифру
-                el.classList.add('selected');
-                // Пересчитываем общую цену
-                calcConstructor();
-            };
-            p.appendChild(el);
-        }
-    });
+// Загрузка данных с сервера
+async function loadData() {
+    try {
+        const v = Date.now(); // Кеш-бастер
+        const [pRes, cRes] = await Promise.all([
+            fetch(`${API_BASE}/api/products?v=${v}`),
+            fetch(`${API_BASE}/api/config?v=${v}`)
+        ]);
+
+        if (!pRes.ok || !cRes.ok) throw new Error("Ошибка API");
+
+        const pData = await pRes.json();
+        products = pData.products || [];
+        config = await cRes.json();
+
+        renderCatalog();            // Рисуем наборы
+        renderDynamicConstructor(); // Рисуем конструктор
+        renderCart();               // Рисуем корзину
+    } catch (e) {
+        console.error("Критическая ошибка:", e);
+        document.getElementById("catalog").innerHTML = "<p style='color:red; text-align:center;'>Ошибка загрузки данных</p>";
+    }
 }
-// --- 4. ЛОГИКА КОНСТРУКТОРА ---
-window.calcConstructor = () => {
-    if (!config.berry_base_price) return 0;
 
-    const sChoc = document.getElementById("c-chocolate-strawberry").value;
-    const rChoc = document.getElementById("c-chocolate-raspberry").value;
-    const bChoc = document.getElementById("c-chocolate-blueberry").value;
+// --- 2. ДИНАМИЧЕСКИЙ КОНСТРУКТОР ---
+
+function renderDynamicConstructor() {
+    const container = document.getElementById("dynamic-constructor-container");
+    if (!container || !config.items) return;
+
+    container.innerHTML = "";
+    config.items.forEach((item, index) => {
+        // Создаем HTML структуру для каждой ягоды
+        const block = document.createElement("div");
+        block.className = "constructor-group";
+        block.innerHTML = `
+            <label style="font-weight:bold; display:block; margin-bottom:5px;">
+                ${item.icon || '🍓'} ${item.name} (${item.base_price} ₽/шт)
+            </label>
+            <div id="picker-${item.id}" class="scroll-picker"></div>
+            <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
+                ${config.chocolates.map(c => `
+                    <option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>
+                `).join('')}
+            </select>
+            ${index < config.items.length - 1 ? '<hr class="separator">' : ''}
+        `;
+        container.appendChild(block);
+
+        // Инициализируем counts для этой позиции
+        if (counts[item.id] === undefined) counts[item.id] = 0;
+
+        // Рисуем крутилку (пикер) для этой ягоды
+        renderPicker(item);
+    });
+    calcConstructor();
+}
+
+function renderPicker(item) {
+    const p = document.getElementById(`picker-${item.id}`);
+    if (!p) return;
     
-    const priceS = counts.strawberry * (config.berry_base_price + (config[`strawberry_${sChoc}_extra`] || 0));
-    const priceR = counts.raspberry * (config.berry_base_price + (config[`raspberry_${rChoc}_extra`] || 0));
-    const priceB = counts.blueberry * (config.berry_base_price + (config[`blueberry_${bChoc}_extra`] || 0));
-    
-    const total = priceS + priceR + priceB;
-    document.getElementById("constructor-price").innerText = total;
+    p.innerHTML = "";
+    for (let i = 0; i <= item.max; i += item.step) {
+        const el = document.createElement('div');
+        el.className = `picker-item ${counts[item.id] === i ? 'selected' : ''}`;
+        el.innerText = i;
+        el.onclick = () => {
+            counts[item.id] = i;
+            p.querySelectorAll('.picker-item').forEach(child => child.classList.remove('selected'));
+            el.classList.add('selected');
+            calcConstructor();
+        };
+        p.appendChild(el);
+    }
+}
+
+// Универсальный расчет цены конструктора
+window.calcConstructor = () => {
+    let total = 0;
+    if (!config.items) return 0;
+
+    config.items.forEach(item => {
+        const count = counts[item.id] || 0;
+        const chocId = document.getElementById(`c-chocolate-${item.id}`).value;
+        const choc = config.chocolates.find(c => c.id === chocId);
+        const extra = choc ? choc.extra : 0;
+
+        total += count * (item.base_price + extra);
+    });
+
+    const priceEl = document.getElementById("constructor-price");
+    if (priceEl) priceEl.innerText = total;
     return total;
 };
 
+// Добавление собранного микса в корзину
 window.addConstructorToCart = () => {
     const total = window.calcConstructor();
-    if (total <= 0) return tg.showAlert("Выберите хотя бы одну ягоду!");
+    if (total <= 0) return tg.showAlert("Выберите ингредиенты!");
 
     let desc = [];
-    const berryNames = { strawberry: "Клубника", raspberry: "Малина", blueberry: "Голубика" };
-
-    Object.keys(berryNames).forEach(key => {
-        if (counts[key] > 0) {
-            const select = document.getElementById(`c-chocolate-${key}`);
-            const chocText = select.options[select.selectedIndex].text;
-            desc.push(`${berryNames[key]}: ${counts[key]}шт (${chocText})`);
+    config.items.forEach(item => {
+        if (counts[item.id] > 0) {
+            const sel = document.getElementById(`c-chocolate-${item.id}`);
+            const chocText = sel.options[sel.selectedIndex].text;
+            desc.push(`${item.name}: ${counts[item.id]}шт (${chocText})`);
         }
     });
 
-    cart.push({ 
-        id: Date.now(), 
-        name: "Микс собранный", 
-        qty: 1, 
-        price: total, 
-        description: desc.join(" + ") 
+    cart.push({
+        id: Date.now(),
+        name: "Собранный микс",
+        qty: 1,
+        price: total,
+        description: desc.join(" + ")
     });
-    
-    // Сброс всего
-    counts = { strawberry: 0, raspberry: 0, blueberry: 0 };
-    initPickers();
-    calcConstructor();
+
+    // Сброс и уведомление
+    config.items.forEach(item => counts[item.id] = 0);
+    renderDynamicConstructor();
     renderCart();
     tg.showAlert("Добавлено в корзину!");
 };
 
-// --- 5. ЛОГИКА КОРЗИНЫ (С УДАЛЕНИЕМ) ---
+// --- 3. ЛОГИКА КОРЗИНЫ ---
+
 window.removeFromCart = (idx) => {
     cart.splice(idx, 1);
     renderCart();
@@ -105,7 +150,7 @@ window.renderCart = () => {
     if (!div) return;
 
     if (cart.length === 0) {
-        div.innerHTML = "<p style='text-align:center;color:#999'>Корзина пуста</p>";
+        div.innerHTML = "<p style='text-align:center;color:#999;padding:10px;'>Корзина пуста</p>";
         checkoutBtn.innerText = "Оформить заказ (0 ₽)";
         return;
     }
@@ -118,8 +163,8 @@ window.renderCart = () => {
         row.className = "cart-item";
         row.innerHTML = `
             <div style="flex:1">
-                <b>${item.name}</b><br>
-                <small>${item.description || ''}</small><br>
+                <b style="color:var(--primary-color)">${item.name}</b><br>
+                ${item.description ? `<small style="color:#777;">${item.description}</small><br>` : ''}
                 <b>${item.price * item.qty} ₽</b>
             </div>
             <button class="remove-btn" onclick="window.removeFromCart(${idx})">×</button>
@@ -129,148 +174,58 @@ window.renderCart = () => {
     checkoutBtn.innerText = `Оформить заказ (${total} ₽)`;
 };
 
-// --- 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
-window.openTab = (id) => {
-    document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById(id === 'catalog-tab' ? 'btn-catalog' : 'btn-constructor').classList.add('active');
-};
-window.addToCart = (id) => {
-    const p = products.find(x => x.id === id);
-    const ex = cart.find(x => x.id === id && !x.description);
-    if (ex) ex.qty++; else cart.push({...p, qty: 1});
-    renderCart();
-};
+// --- 4. КАТАЛОГ И МОДАЛКИ ---
+
 window.renderCatalog = () => {
     const cat = document.getElementById("catalog");
+    if (!cat) return;
     cat.innerHTML = "";
     products.forEach(p => {
-        const d = document.createElement("div"); d.className = "card";
-        d.innerHTML = `<strong>${p.name}</strong><span>${p.price} ₽</span><button onclick="event.stopPropagation(); addToCart(${p.id})">В корзину</button>`;
+        const d = document.createElement("div");
+        d.className = "card";
+        d.innerHTML = `
+            <strong style="display:block; min-height:40px;">${p.name}</strong>
+            <span style="display:block; margin:10px 0; font-weight:bold;">${p.price} ₽</span>
+            <button onclick="event.stopPropagation(); window.addToCart(${p.id})">В корзину</button>
+        `;
         d.onclick = () => showModal(p);
         cat.appendChild(d);
     });
 };
+
+window.addToCart = (id) => {
+    const p = products.find(x => x.id === id);
+    const existing = cart.find(x => x.id === id && !x.description);
+    if (existing) existing.qty++;
+    else cart.push({ ...p, qty: 1 });
+    renderCart();
+    tg.showAlert("Добавлено!");
+};
+
 window.showModal = (p) => {
     document.getElementById("modal-title").innerText = p.name;
     document.getElementById("modal-desc").innerText = p.description || "";
     document.getElementById("modal-price").innerText = p.price + " ₽";
-    document.getElementById("modal-add-btn").onclick = () => { addToCart(p.id); closeModal(); };
+    document.getElementById("modal-add-btn").onclick = () => {
+        window.addToCart(p.id);
+        closeModal();
+    };
     document.getElementById("modal").style.display = "block";
 };
+
 window.closeModal = () => document.getElementById("modal").style.display = "none";
+
+// --- 5. ФИНАЛЬНЫЙ ЗАКАЗ ---
+
 window.checkout = () => {
-    if (!cart.length) return tg.showAlert("Пусто!");
-    tg.sendData(JSON.stringify({ items: cart, total: cart.reduce((s, i) => s + i.price*i.qty, 0) }));
+    if (!cart.length) return tg.showAlert("Корзина пуста!");
+    const finalTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    tg.sendData(JSON.stringify({ items: cart, total: finalTotal }));
     tg.close();
 };
 
-// 3. ОТРИСОВКА ОПЦИЙ ШОКОЛАДА
-function renderConstructorOptions() {
-    const strawberrySelect = document.getElementById("c-chocolate-strawberry");
-    const raspberrySelect = document.getElementById("c-chocolate-raspberry");
-    
-    if (!strawberrySelect || !raspberrySelect) return;
-
-    // Список доступных типов шоколада (можно тоже вынести в конфиг)
-    // Но пока сделаем на основе ключей, которые есть в config
-    const chocTypes = ["milk", "dark", "white", "dubai", "kinder"]; 
-    
-    const translate = {
-        milk: "Молочный", dark: "Темный", white: "Белый",
-        dubai: "Дубайский", kinder: "Киндер"
-    };
-
-    strawberrySelect.innerHTML = "";
-    raspberrySelect.innerHTML = "";
-
-    chocTypes.forEach(type => {
-        // Проверяем, есть ли наценка для этого шоколада в конфиге
-        const extraS = config[`strawberry_${type}_extra`];
-        const extraR = config[`raspberry_${type}_extra`];
-        const extraB = config[`blueberry_${type}_extra`]
-        if (extraS !== undefined) {
-            strawberrySelect.innerHTML += `<option value="${type}">${translate[type] || type} (+${extraS} ₽)</option>`;
-        }
-        if (extraR !== undefined) {
-            raspberrySelect.innerHTML += `<option value="${type}">${translate[type] || type} (+${extraR} ₽)</option>`;
-        }
-    });
-}
-// 2. ЗАГРУЗКА ДАННЫХ с API на Railway
-async function loadData() {
-    try {
-        // Добавляем временную метку, чтобы избежать кеширования
-        const v = Date.now();
-        const [pRes, cRes] = await Promise.all([
-            fetch(`${API_BASE}/api/products?v=${v}`),
-            fetch(`${API_BASE}/api/config?v=${v}`)
-        ]);
-
-        products = (await pRes.json()).products || [];
-        config = await cRes.json() || {};
-
-        renderCatalog();
-        renderCart();
-        renderConstructorOptions();
-        calcConstructor();
-    } catch (e) {
-        console.error("Критическая ошибка loadData:", e);
-        document.getElementById("catalog").innerHTML = "<p style='color:red; text-align:center;'>Ошибка загрузки данных</p>";
-    }
-}
-// Функция изменения цены товара (можно вызывать из консоли для теста)
-async function apiUpdateProductPrice(id, newPrice) {
-    try {
-        const response = await fetch(`${API_BASE}/api/update-products`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id, price: newPrice })
-        });
-        const result = await response.json();
-        if (result.status === 'ok') loadData(); // Обновляем данные на экране
-    } catch (e) { console.error("Ошибка обновления товара:", e); }
-}
-
-// Функция изменения цен конструктора
-async function apiUpdateConfig(key, value) {
-    try {
-        const response = await fetch(`${API_BASE}/api/update-config`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key: key, value: value })
-        });
-        const result = await response.json();
-        if (result.status === 'ok') loadData();
-    } catch (e) { console.error("Ошибка обновления конфига:", e); }
-}
-function renderConstructorOptions() {
-    const sSelect = document.getElementById("c-chocolate-strawberry");
-    const rSelect = document.getElementById("c-chocolate-raspberry");
-    if (!sSelect || !rSelect) return;
-
-    const chocTypes = ["milk", "dark", "white", "dubai", "kinder"];
-    const names = { milk: "Молочный", dark: "Темный", white: "Белый", dubai: "Дубайский", kinder: "Киндер" };
-
-    sSelect.innerHTML = ""; rSelect.innerHTML = "";
-
-    chocTypes.forEach(t => {
-        const exS = config[`strawberry_${t}_extra`];
-        const exR = config[`raspberry_${t}_extra`];
-        if (exS !== undefined) sSelect.innerHTML += `<option value="${t}">${names[t]} (+${exS}₽/шт)</option>`;
-        if (exR !== undefined) rSelect.innerHTML += `<option value="${t}">${names[t]} (+${exR}₽/шт)</option>`;
-    });
-}
-
-window.calcConstructor = () => {
-    if (!config.berry_base_price) return;
-    const sChoc = document.getElementById("c-chocolate-strawberry").value;
-    const rChoc = document.getElementById("c-chocolate-raspberry").value;
-    
-    const priceS = counts.strawberry * (config.berry_base_price + (config[`strawberry_${sChoc}_extra`] || 0));
-    const priceR = counts.raspberry * (config.berry_base_price + (config[`raspberry_${rChoc}_extra`] || 0));
-    
-    const total = priceS + priceR;
-    document.getElementById("constructor-price").innerText = total;
-    return total;
+window.openTab = (id) => {
+    document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById(id === 'catalog-tab' ? 'btn-catalog' : 'btn-constructor').classList.add('active');
 };

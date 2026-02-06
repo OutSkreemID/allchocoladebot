@@ -18,32 +18,16 @@
     </div>
 
     <div id="constructor-tab" class="tab-content">
-        <div class="constructor-card">
-            <h3>Создай свой микс</h3>
-            
-            <!-- Клубника -->
-            <label>🍓 Клубника:</label>
-            <div id="picker-strawberry" class="scroll-picker"></div>
-            <select id="c-chocolate-strawberry" onchange="calcConstructor()"></select>
+    <div class="constructor-card">
+        <h3>Создай свой микс</h3>
+        
+        <!-- Сюда JS сам добавит все ягоды, крутилки и шоколад -->
+        <div id="dynamic-constructor-container"></div>
 
-            <hr class="separator">
-
-            <!-- Малина -->
-            <label>🔴 Малина:</label>
-            <div id="picker-raspberry" class="scroll-picker"></div>
-            <select id="c-chocolate-raspberry" onchange="calcConstructor()"></select>
-            
-            <hr class="separator">
-            
-            <!-- Голубика -->
-            <label>🫐 Голубика:</label>
-            <div id="picker-blueberry" class="scroll-picker"></div>
-            <select id="c-chocolate-blueberry" onchange="calcConstructor()"></select> 
-
-            <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
-            <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
-        </div>
+        <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
+        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
     </div>
+</div>
                    
 
 
