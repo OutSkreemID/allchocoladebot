@@ -44,11 +44,20 @@ function renderDynamicConstructor() {
 
     container.innerHTML = "";
     config.items.forEach((item, index) => {
-        // Фильтруем шоколад: берем только тот, чьи ID есть в списке allowed_chocolates этой ягоды
-        const availableChoc = (config.chocolates || []).filter(c => 
-    (item.allowed_chocolates || []).includes(c.id)
-);
+        // 1. Фильтруем список шоколада для этой ягоды
+        const allowedList = item.allowed_chocolates || [];
+        const availableChoc = (config.chocolates || []).filter(c => allowedList.includes(c.id));
 
+        // 2. Создаем HTML для выбора шоколада ТОЛЬКО если он есть
+        let chocSelectHtml = "";
+        if (availableChoc.length > 0) {
+            chocSelectHtml = `
+                <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
+                    ${availableChoc.map(c => `<option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>`).join('')}
+                </select>`;
+        }
+
+        // 3. Собираем весь блок ягоды
         const block = document.createElement("div");
         block.className = "constructor-group";
         block.innerHTML = `
@@ -56,11 +65,7 @@ function renderDynamicConstructor() {
                 ${item.icon || '🍓'} ${item.name} (${item.base_price} ₽/шт)
             </label>
             <div id="picker-${item.id}" class="scroll-picker"></div>
-            <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
-                ${availableChoc.map(c => `
-                    <option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>
-                `).join('')}
-            </select>
+            ${chocSelectHtml} 
             ${index < config.items.length - 1 ? '<hr class="separator">' : ''}
         `;
         container.appendChild(block);
@@ -97,10 +102,14 @@ window.calcConstructor = () => {
 
     config.items.forEach(item => {
         const count = counts[item.id] || 0;
-        const chocId = document.getElementById(`c-chocolate-${item.id}`).value;
-        const choc = config.chocolates.find(c => c.id === chocId);
-        const extra = choc ? choc.extra : 0;
+const selectElement = document.getElementById(`c-chocolate-${item.id}`);
 
+let extra = 0;
+if (selectElement) {
+    const chocId = selectElement.value;
+    const choc = config.chocolates.find(c => c.id === chocId);
+    extra = choc ? choc.extra : 0;
+}
         total += count * (item.base_price + extra);
     });
 
@@ -116,13 +125,13 @@ window.addConstructorToCart = () => {
 
     let desc = [];
     config.items.forEach(item => {
-        if (counts[item.id] > 0) {
-            const sel = document.getElementById(`c-chocolate-${item.id}`);
-            const chocText = sel.options[sel.selectedIndex].text;
-            desc.push(`${item.name}: ${counts[item.id]}шт (${chocText})`);
-        }
-    });
-
+    if (counts[item.id] > 0) {
+        const select = document.getElementById(`c-chocolate-${item.id}`);
+        // Если выбор шоколада был, пишем его название, если нет — просто название ягоды
+        const chocText = select ? ` (${select.options[select.selectedIndex].text})` : "";
+        desc.push(`${item.name}: ${counts[item.id]}шт${chocText}`);
+    }
+});
     cart.push({
         id: Date.now(),
         name: "Собранный микс",
