@@ -1,9 +1,10 @@
 :root {
-    --bg-color: #FDFBF7;        /* Светло-кремовый фон страницы */
-    --card-bg: #FAF3E0;         /* Бежевые карточки */
-    --primary-color: #4B2C20;   /* Горький шоколад (текст, кнопки) */
-    --secondary-color: #8D5B41; /* Молочный шоколад */
-    --accent-color: #D7CCC8;    /* Капучино */
+    --bg-color: #FDFBF7;
+    --card-bg: #FAF3E0;
+    --primary-color: #4B2C20;
+    --secondary-color: #8D5B41;
+    --accent-color: #D7CCC8;
+    --glass-bg: rgba(250, 243, 224, 0.75);
 }
 
 * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -11,11 +12,282 @@
 body {
     margin: 0;
     padding: 15px;
-    background-color: var(--bg-color);
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8D6 100%);
     color: var(--primary-color);
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* ВКЛАДКИ */
+/* АНИМИРОВАННЫЕ ЯГОДЫ НА ФОНЕ - 10 РЯДОВ ПО 8 ЯГОД (80 ЯГОД) */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 200vh;
+    z-index: 0;
+    pointer-events: none;
+    background-image: 
+url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='48' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='44' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='50' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='42' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='46' opacity='0.12'%3E🍓%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='49' opacity='0.1'%3E🫐%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='51' opacity='0.11'%3E🍒%3C/text%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='43' opacity='0.09'%3E🍇%3C/text%3E%3C/svg%3E");
+    background-position: 
+        3% 2%,
+        15% 2%,
+        27% 2%,
+        39% 2%,
+        51% 2%,
+        63% 2%,
+        75% 2%,
+        87% 2%,
+        3% 12%,
+        15% 12%,
+        27% 12%,
+        39% 12%,
+        51% 12%,
+        63% 12%,
+        75% 12%,
+        87% 12%,
+        3% 22%,
+        15% 22%,
+        27% 22%,
+        39% 22%,
+        51% 22%,
+        63% 22%,
+        75% 22%,
+        87% 22%,
+        3% 32%,
+        15% 32%,
+        27% 32%,
+        39% 32%,
+        51% 32%,
+        63% 32%,
+        75% 32%,
+        87% 32%,
+        3% 42%,
+        15% 42%,
+        27% 42%,
+        39% 42%,
+        51% 42%,
+        63% 42%,
+        75% 42%,
+        87% 42%,
+        3% 52%,
+        15% 52%,
+        27% 52%,
+        39% 52%,
+        51% 52%,
+        63% 52%,
+        75% 52%,
+        87% 52%,
+        3% 62%,
+        15% 62%,
+        27% 62%,
+        39% 62%,
+        51% 62%,
+        63% 62%,
+        75% 62%,
+        87% 62%,
+        3% 72%,
+        15% 72%,
+        27% 72%,
+        39% 72%,
+        51% 72%,
+        63% 72%,
+        75% 72%,
+        87% 72%,
+        3% 82%,
+        15% 82%,
+        27% 82%,
+        39% 82%,
+        51% 82%,
+        63% 82%,
+        75% 82%,
+        87% 82%,
+        3% 92%,
+        15% 92%,
+        27% 92%,
+        39% 92%,
+        51% 92%,
+        63% 92%,
+        75% 92%,
+        87% 92%;
+    background-size: 
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px,
+        48px,
+        44px,
+        50px,
+        42px,
+        46px,
+        49px,
+        51px,
+        43px;
+    background-repeat: no-repeat;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* Все интерактивные элементы поверх фона */
+.tabs, .tab-content, .cart-section, .catalog, .constructor-card {
+    position: relative;
+    z-index: 10;
+}
+
+/* ВКЛАДКИ - СТЕКЛЯННЫЙ ЭФФЕКТ */
 .tabs {
     display: flex;
     gap: 8px;
@@ -26,32 +298,49 @@ body {
     padding: 12px;
     border: none;
     border-radius: 12px;
-    background: var(--accent-color);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 44, 32, 0.15);
     color: var(--primary-color);
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+.tab-btn:hover {
+    background: rgba(250, 243, 224, 0.85);
+    transform: translateY(-2px);
 }
 .tab-btn.active {
     background: var(--primary-color);
     color: white;
+    box-shadow: 0 4px 15px rgba(75, 44, 32, 0.3);
 }
 
 /* ЖЕСТКОЕ РАЗДЕЛЕНИЕ СТРАНИЦ */
 .tab-content {
-    display: none !important; /* По умолчанию всё скрыто */
+    display: none !important;
 }
 .tab-content.active {
-    display: block !important; /* Показываем только активную */
+    display: block !important;
 }
 
-/* КАРТОЧКИ */
+/* КАРТОЧКИ - СТЕКЛЯННЫЙ ЭФФЕКТ */
 .card, .constructor-card, .cart-section, .modal-content {
-    background: var(--card-bg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border: 1px solid rgba(75, 44, 32, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(75, 44, 32, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* КРУГЛЫЙ ПИКЕР В КОНСТРУКТОРЕ */
@@ -67,19 +356,27 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 50%; /* ДЕЛАЕМ КРУГЛЫМИ */
-    border: 1px solid var(--accent-color);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 50%;
+    border: 1px solid rgba(75, 44, 32, 0.2);
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+.picker-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
 }
 .picker-item.selected {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(75, 44, 32, 0.3);
 }
 
-/* КНОПКИ */
+/* КНОПКИ - СТЕКЛЯННЫЙ ЭФФЕКТ */
 .checkout, .checkout-alt, .card button {
     width: 100%;
     padding: 14px;
@@ -89,6 +386,18 @@ body {
     border-radius: 12px;
     font-weight: bold;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(75, 44, 32, 0.3);
+    transition: all 0.3s ease;
+}
+
+.checkout:hover, .checkout-alt:hover, .card button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(75, 44, 32, 0.4);
+}
+
+.checkout:active, .checkout-alt:active, .card button:active {
+    transform: translateY(0);
 }
 
 /* КАТАЛОГ */
@@ -96,4 +405,129 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+}
+
+/* КОРЗИНА */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 12px;
+    border: 1px solid rgba(75, 44, 32, 0.1);
+}
+
+.remove-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(220, 53, 69, 0.8);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: scale(1.1);
+}
+
+/* МОДАЛЬНОЕ ОКНО */
+.modal {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3) !important;
+}
+
+.close-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgba(75, 44, 32, 0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: rotate(90deg);
+}
+
+/* РАЗДЕЛИТЕЛЬ */
+.separator {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(75, 44, 32, 0.2), transparent);
+    margin: 15px 0;
+}
+
+/* УЛУЧШЕННЫЕ SELECT */
+select {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(75, 44, 32, 0.2);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: var(--primary-color);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(75, 44, 32, 0.1);
+}
+
+/* УЛУЧШЕННАЯ ТИПОГРАФИКА */
+h3 {
+    margin: 0 0 15px 0;
+    color: var(--primary-color);
+    font-size: 1.3em;
+}
+
+/* СКРЫТИЕ СКРОЛЛБАРА НО С СОХРАНЕНИЕМ ФУНКЦИОНАЛЬНОСТИ */
+.scroll-picker::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scroll-picker::-webkit-scrollbar-track {
+    background: rgba(75, 44, 32, 0.05);
+    border-radius: 10px;
+}
+
+.scroll-picker::-webkit-scrollbar-thumb {
+    background: rgba(75, 44, 32, 0.2);
+    border-radius: 10px;
+}
+
+.scroll-picker::-webkit-scrollbar-thumb:hover {
+    background: rgba(75, 44, 32, 0.3);
 }

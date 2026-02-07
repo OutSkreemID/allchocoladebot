@@ -1,50 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <link rel="stylesheet" href="style.css?v=2.1">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Strawberry Shop</title>
     <link rel="stylesheet" href="style.css?v=1.5"> <!-- Меняем версию для сброса кеша -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
+<script src="app.js?v=2.1"></script>
 <body>
-    <div class="tabs">
-        <button class="tab-btn active" id="btn-catalog" onclick="openTab('catalog-tab')">Наборы</button>
-        <button class="tab-btn" id="btn-constructor" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
-    </div>
-
-    <div id="catalog-tab" class="tab-content active">
-        <div id="catalog" class="catalog">Загрузка товаров...</div>
-    </div>
-
-    <div id="constructor-tab" class="tab-content">
-        <div class="constructor-card">
-            <h3>Создай свой микс</h3>
-            <div id="dynamic-constructor-container"></div>
-            <div class="total-price" style="text-align:center; font-weight:bold; margin: 15px 0;">
-                Сумма: <span id="constructor-price">0</span> ₽
-            </div>
-            <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
+    <!-- Фон остается снаружи -->
+    <div class="bg-berries-canvas"></div>
+    <div class="content-wrapper">
+    
+        <div class="tabs">
+            <button class="tab-btn active" id="btn-catalog" onclick="openTab('catalog-tab')">Наборы</button>
+            <button class="tab-btn" id="btn-constructor" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
         </div>
-    </div>
 
-    <div class="cart-section">
-        <h3>🛒 Ваша корзина</h3>
-        <div id="cart"></div>
-        <button class="checkout" id="main-checkout" onclick="checkout()">Оформить заказ (0 ₽)</button>
-    </div>
-
-    <div id="modal" class="modal" onclick="closeModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
-        <div class="modal-content" onclick="event.stopPropagation()" style="margin: 20% auto; width: 85%;">
-            <span class="close-btn" onclick="closeModal()" style="float:right; font-size:24px; cursor:pointer;">&times;</span>
-            <img id="modal-img" src="" alt="" style="width:100%; border-radius:15px; display:none; margin-bottom:10px;">
-            <h2 id="modal-title"></h2>
-            <p id="modal-desc"></p>
-            <p><b id="modal-price"></b></p>
-            <button class="checkout" id="modal-add-btn">В корзину</button>
+        <div id="catalog-tab" class="tab-content active">
+            <div id="catalog" class="catalog">Загрузка...</div>
         </div>
-    </div>
 
-    <script src="app.js?v=1.5"></script>
+        <!-- ... и все остальные вкладки, корзина и т.д. ... -->
+    </div> <!-- Конец content-wrapper -->
+
+    <script src="app.js?v=1001"></script>
 </body>
 </html>
