@@ -1,52 +1,47 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Strawberry Shop</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Добавь ?v=1.1 в конец, чтобы сбросить кеш -->
+    <link rel="stylesheet" href="style.css?v=1.1">
 </head>
 <body>
+    <!-- 1. Динамический фон с ягодами -->
+    <div class="bg-berries-scroll"></div>
+    <!-- 2. Слой блюра сверху -->
+    <div class="blur-layer"></div>
 
     <div class="tabs">
         <button class="tab-btn active" id="btn-catalog" onclick="openTab('catalog-tab')">Наборы</button>
         <button class="tab-btn" id="btn-constructor" onclick="openTab('constructor-tab')">Конструктор 🛠️</button>
     </div>
 
+    <!-- Вкладки (убедись, что классы на месте) -->
     <div id="catalog-tab" class="tab-content active">
         <div id="catalog" class="catalog">Загрузка...</div>
     </div>
 
     <div id="constructor-tab" class="tab-content">
-    <div class="constructor-card">
-        <h3>Создай свой микс</h3>
-        
-        <!-- Сюда JS сам добавит все ягоды, крутилки и шоколад -->
-        <div id="dynamic-constructor-container"></div>
-
-        <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
-        <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
-    </div>
-</div>
-                   
-
-
-    <div class="cart-section">
-        <h3>🛒 Ваша корзина</h3>
-        <div id="cart"></div>
-        <button class="checkout" id="main-checkout" onclick="checkout()">Оформить заказ (0 ₽)</button>
+        <div class="constructor-card">
+            <h3>Создай свой микс</h3>
+            <div id="dynamic-constructor-container"></div>
+            <div class="total-price">Сумма: <span id="constructor-price">0</span> ₽</div>
+            <button class="checkout-alt" onclick="addConstructorToCart()">Добавить микс в корзину</button>
+        </div>
     </div>
 
+    <!-- Модалка с ФОТО -->
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModal()">&times;</span>
+            <!-- Сюда добавили картинку -->
+            <img id="modal-img" src="" alt="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; display: none;">
             <h2 id="modal-title"></h2>
             <p id="modal-desc"></p>
             <p><b id="modal-price"></b></p>
             <button class="checkout" id="modal-add-btn">Добавить в корзину</button>
         </div>
     </div>
+    
     <script src="app.js"></script>
 </body>
 </html>

@@ -218,9 +218,20 @@ window.addToCart = (id) => {
 };
 
 window.showModal = (p) => {
+    const modalImg = document.getElementById("modal-img");
+    
+    // Если у товара в базе есть ссылка на картинку
+    if (p.image) {
+        modalImg.src = `${API_BASE}${p.image}`; // API_BASE — это твой домен Railway
+        modalImg.style.display = "block";
+    } else {
+        modalImg.style.display = "none";
+    }
+
     document.getElementById("modal-title").innerText = p.name;
     document.getElementById("modal-desc").innerText = p.description || "";
     document.getElementById("modal-price").innerText = p.price + " ₽";
+    
     document.getElementById("modal-add-btn").onclick = () => {
         window.addToCart(p.id);
         closeModal();
