@@ -40,26 +40,22 @@ async function loadData() {
 
 // Исправленное переключение вкладок
 window.openTab = (id) => {
-    // Скрываем все вкладки
-    document.querySelectorAll('.tab-content').forEach(el => {
-        el.classList.remove('active');
-    });
-    // Убираем активность со всех кнопок
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    // 1. Скрываем все вкладки через удаление класса active
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
 
-    // Показываем нужную
-    const targetTab = document.getElementById(id);
-    if (targetTab) {
-        targetTab.classList.add('active');
-    }
+    // 2. Убираем активный цвет со всех кнопок
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(btn => btn.classList.remove('active'));
 
-    // Делаем кнопку активной
-    const activeBtnId = id === 'catalog-tab' ? 'btn-catalog' : 'btn-constructor';
-    const activeBtn = document.getElementById(activeBtnId);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
+    // 3. Показываем нужную вкладку
+    document.getElementById(id).classList.add('active');
+
+    // 4. Делаем кнопку активной
+    if (id === 'catalog-tab') {
+        document.getElementById('btn-catalog').classList.add('active');
+    } else {
+        document.getElementById('btn-constructor').classList.add('active');
     }
 };
 // --- 2. ДИНАМИЧЕСКИЙ КОНСТРУКТОР ---
