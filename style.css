@@ -1,61 +1,93 @@
 :root {
-    --page-bg: #FDFBF7;         /* Молочный/Белый фон страницы */
-    --card-bg: #FAF3E0;         /* Бежевый кофе (для карточек) */
+    --page-bg: #FDFBF7;         /* Молочный фон страницы */
+    --card-bg: #FAF3E0;         /* Бежевый кофе для карточек */
     --primary-color: #4B2C20;   /* Горький шоколад */
     --secondary-color: #8D5B41; /* Кофе с молоком */
     --text-color: #3E2723;
     --accent-color: #D7CCC8;
 }
 
-body {
+/* Сброс высоты для фона */
+html, body {
+    height: 100%;
     margin: 0;
+    padding: 0;
+}
+
+body {
     padding: 15px;
     background-color: var(--page-bg);
     color: var(--text-color);
-    font-family: sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     position: relative;
-    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* ФОН, КОТОРЫЙ ЛИСТАЕТСЯ (Ягоды) */
+/* ЯГОДЫ НА ФОНЕ (Листаются) */
 .bg-berries-scroll {
-    position: absolute; /* Чтобы листался вместе с body */
+    position: absolute;
     top: 0; left: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    min-height: 100%; /* Растягивается на всю длину контента */
     z-index: -2;
-    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🍓%3C/text%3E%3Ctext x='60' y='80' font-size='15'%3E🫐%3C/text%3E%3Ctext x='80' y='20' font-size='18'%3E🍓%3C/text%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🍓%3C/text%3E%3Ctext x='60' y='80' font-size='15'%3E🫐%3C/text%3E%3C/svg%3E");
     background-repeat: repeat;
-    opacity: 0.25; /* Еле заметные ягоды */
+    opacity: 0.35;
 }
 
-/* СЛОЙ БЛЮРА (Зафиксирован сверху) */
+/* МАТОВОЕ СТЕКЛО (Зафиксировано) */
 .blur-layer {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: -1;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    background: rgba(253, 251, 247, 0.4); /* Полупрозрачный молочный */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(253, 251, 247, 0.5);
 }
 
-/* КАРТОЧКИ (Бежевые) */
+/* КАРТОЧКИ И КОНТЕЙНЕРЫ (Бежевые) */
 .card, .constructor-card, .cart-section, .modal-content {
-    background: var(--card-bg) !important; /* Твой прошлый фон теперь на карточках */
+    background: var(--card-bg) !important;
     border-radius: 20px;
     padding: 15px;
     border: 1px solid rgba(75, 44, 32, 0.1);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(75, 44, 32, 0.08);
+    margin-bottom: 20px;
 }
 
-/* ЛОГИКА ТАБОВ (ОБЯЗАТЕЛЬНО) */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+/* ЛОГИКА ТАБОВ (ЖЕСТКОЕ СКРЫТИЕ) */
+.tab-content {
+    display: none !important;
+}
+.tab-content.active {
+    display: block !important;
+}
 
-.tabs { display: flex; gap: 8px; margin-bottom: 20px; position: sticky; top: 10px; z-index: 10; }
-.tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; background: var(--accent-color); color: var(--primary-color); font-weight: bold; }
-.tab-btn.active { background: var(--primary-color); color: white; }
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-color);
+    color: var(--primary-color);
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tab-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
 
 /* КНОПКИ */
 .checkout, .checkout-alt, .card button {
@@ -63,7 +95,15 @@ body {
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 12px;
+    padding: 14px;
     font-weight: bold;
+    width: 100%;
     cursor: pointer;
+}
+
+/* КАТАЛОГ ГРИД */
+.catalog {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }

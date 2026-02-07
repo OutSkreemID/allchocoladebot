@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Загрузка данных с сервера
 async function loadData() {
     try {
-        const v = Date.now(); // Кеш-бастер
+        const v = Date.now();
         const [pRes, cRes] = await Promise.all([
             fetch(`${API_BASE}/api/products?v=${v}`),
             fetch(`${API_BASE}/api/config?v=${v}`)
@@ -24,18 +24,44 @@ async function loadData() {
         if (!pRes.ok || !cRes.ok) throw new Error("Ошибка API");
 
         const pData = await pRes.json();
-        products = pData.products || [];
-        config = await cRes.json();
+        const cData = await cRes.json();
 
-        renderCatalog();            // Рисуем наборы
-        renderDynamicConstructor(); // Рисуем конструктор
-        renderCart();               // Рисуем корзину
+        products = pData.products || [];
+        config = cData || { items: [], chocolates: [] };
+
+        renderCatalog();
+        renderDynamicConstructor();
+        renderCart();
     } catch (e) {
         console.error("Критическая ошибка:", e);
-        document.getElementById("catalog").innerHTML = "<p style='color:red; text-align:center;'>Ошибка загрузки данных</p>";
+        document.getElementById("catalog").innerHTML = "<p style='text-align:center; color:red;'>Ошибка загрузки данных. Проверьте интернет или работу бота.</p>";
     }
 }
 
+// Исправленное переключение вкладок
+window.openTab = (id) => {
+    // Скрываем все вкладки
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+    });
+    // Убираем активность со всех кнопок
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Показываем нужную
+    const targetTab = document.getElementById(id);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+
+    // Делаем кнопку активной
+    const activeBtnId = id === 'catalog-tab' ? 'btn-catalog' : 'btn-constructor';
+    const activeBtn = document.getElementById(activeBtnId);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+};
 // --- 2. ДИНАМИЧЕСКИЙ КОНСТРУКТОР ---
 
 function renderDynamicConstructor() {
