@@ -44,20 +44,24 @@ function renderDynamicConstructor() {
 
     container.innerHTML = "";
     config.items.forEach((item, index) => {
-        // 1. Фильтруем список шоколада для этой ягоды
+        // 1. Берем список ID шоколада, который разрешен для этой ягоды
         const allowedList = item.allowed_chocolates || [];
+        
+        // 2. Фильтруем глобальный список шоколада, оставляя только разрешенные
         const availableChoc = (config.chocolates || []).filter(c => allowedList.includes(c.id));
 
-        // 2. Создаем HTML для выбора шоколада ТОЛЬКО если он есть
+        // ОТЛАДКА: Раскомментируйте строку ниже, чтобы увидеть в консоли браузера, что нашел скрипт
+        // console.log(`Ягода: ${item.name}, Разрешено шоколада: ${availableChoc.length}`, availableChoc);
+
+        // 3. Создаем HTML только если массив НЕ ПУСТОЙ
         let chocSelectHtml = "";
-        if (availableChoc.length > 0) {
+        if (availableChoc && availableChoc.length > 0) {
             chocSelectHtml = `
                 <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
                     ${availableChoc.map(c => `<option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>`).join('')}
                 </select>`;
         }
 
-        // 3. Собираем весь блок ягоды
         const block = document.createElement("div");
         block.className = "constructor-group";
         block.innerHTML = `
