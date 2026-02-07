@@ -1,133 +1,48 @@
 :root {
-    --page-bg: #FCF9F2;         /* Светлый молочный фон */
-    --card-bg: #FAF3E0;         /* Бежевый кофе (ваш прошлый фон теперь тут) */
-    --primary-color: #4B2C20;   /* Горький шоколад */
-    --secondary-color: #8D5B41; /* Молочный шоколад */
-    --text-color: #3E2723;      /* Кофейный текст */
-    --accent-color: #D7CCC8;    /* Капучино */
+    --bg-color: #FAF3E0;
+    --card-bg: #FFFFFF;
+    --primary-color: #4B2C20;
+    --secondary-color: #A67B5B;
+    --text-color: #3E2723;
+    --accent-color: #D7CCC8;
 }
 
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
 
-body {
-    margin: 0;
-    padding: 15px;
-    background-color: var(--page-bg);
-    color: var(--text-color);
-    position: relative;
-    min-height: 100vh;
-}
+body { margin: 0; padding: 15px; background: var(--bg-color); color: var(--text-color); }
 
-/* ФОНОВЫЙ СЛОЙ С ЯГОДАМИ */
-.bg-berries {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-    /* Здесь мы используем паттерн из эмодзи, чтобы не грузить тяжелые картинки */
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🍓%3C/text%3E%3Ctext x='50' y='80' font-size='15'%3E🫐%3C/text%3E%3Ctext x='80' y='20' font-size='18'%3E🍓%3C/text%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0.4;
-    pointer-events: none;
-}
+h3 { text-align: center; color: var(--primary-color); }
 
-/* ЭФФЕКТ БЛЮРА (МАТОВОЕ СТЕКЛО) */
-.blur-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    backdrop-filter: blur(8px); /* Сила размытия */
-    -webkit-backdrop-filter: blur(8px);
-    background: rgba(252, 249, 242, 0.4); /* Полупрозрачная накидка */
-    pointer-events: none;
-}
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; background: var(--accent-color); padding: 5px; border-radius: 12px; }
+.tab-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 8px; font-weight: bold; color: var(--primary-color); cursor: pointer; }
+.tab-btn.active { background: var(--primary-color); color: #fff; }
 
-/* ВКЛАДКИ */
-.tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    background: rgba(215, 204, 200, 0.5);
-    padding: 5px;
-    border-radius: 14px;
-    position: sticky; /* Вкладки будут прилипать сверху при скролле */
-    top: 10px;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-.tab-btn {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    background: transparent;
-    border-radius: 10px;
-    font-weight: bold;
-    color: var(--primary-color);
-    transition: all 0.3s ease;
-}
+.catalog { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card { background: white; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid var(--accent-color); }
+.card strong { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+.card button { width: 100%; padding: 8px; margin-top: 10px; border: none; border-radius: 8px; background: var(--secondary-color); color: white; font-weight: bold; }
 
-.tab-btn.active {
-    background: var(--primary-color);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(75, 44, 32, 0.2);
-}
+.constructor-card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.scroll-picker { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0; scroll-snap-type: x mandatory; }
+.scroll-picker::-webkit-scrollbar { display: none; }
+.picker-item { flex: 0 0 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: var(--bg-color); border-radius: 50%; font-weight: bold; scroll-snap-align: center; }
+.picker-item.selected { background: var(--primary-color); color: white; transform: scale(1.1); }
 
-/* КАРТОЧКИ (Теперь кофейного цвета) */
-.card, .constructor-card, .cart-section {
-    background: var(--card-bg);
-    border-radius: 20px;
-    padding: 18px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(75, 44, 32, 0.1);
-    box-shadow: 0 8px 20px rgba(75, 44, 32, 0.05);
-}
+select { width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--accent-color); background: var(--bg-color); color: var(--primary-color); }
+.separator { border: 0; border-top: 1px solid var(--accent-color); margin: 20px 0; }
 
-.card strong {
-    color: var(--primary-color);
-    font-size: 1.05rem;
-}
+.total-price { text-align: center; font-size: 1.2rem; font-weight: bold; margin: 15px 0; color: var(--primary-color); }
 
-.card button {
-    background: var(--secondary-color);
-    border-radius: 12px;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-    width: 100%;
-}
+.cart-section { margin-top: 20px; background: white; padding: 15px; border-radius: 15px; border: 2px dashed var(--accent-color); }
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--accent-color); }
+.remove-btn { background: #fee; border: none; color: #c33; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; }
 
-/* КНОПКИ В КОРЗИНЕ И КОНСТРУКТОРЕ */
-.checkout, .checkout-alt {
-    background: var(--primary-color);
-    border-radius: 15px;
-    padding: 16px;
-    box-shadow: 0 5px 15px rgba(75, 44, 32, 0.3);
-}
+.checkout { width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+.checkout-alt { width: 100%; padding: 12px; background: var(--secondary-color); color: white; border: none; border-radius: 10px; font-weight: bold; }
 
-/* СКРОЛЛ-ПИКЕР */
-.picker-item {
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid var(--accent-color);
-}
-
-.picker-item.selected {
-    background: var(--primary-color);
-    color: white;
-}
-
-/* МОДАЛКА */
-.modal-content {
-    background: var(--page-bg);
-    border: 2px solid var(--primary-color);
-}
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+.modal-content { background: white; margin: 20% auto; padding: 20px; width: 85%; border-radius: 20px; position: relative; text-align: center; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa; }
