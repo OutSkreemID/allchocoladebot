@@ -50,18 +50,19 @@ function renderDynamicConstructor() {
         // 2. Фильтруем глобальный список шоколада, оставляя только разрешенные
         const availableChoc = (config.chocolates || []).filter(c => allowedList.includes(c.id));
 
-        // ОТЛАДКА: Раскомментируйте строку ниже, чтобы увидеть в консоли браузера, что нашел скрипт
-        // console.log(`Ягода: ${item.name}, Разрешено шоколада: ${availableChoc.length}`, availableChoc);
+        // Проверка в консоли (нажмите F12 в браузере, чтобы увидеть)
+console.log(`Ягода: ${item.name}, Найдено шоколада: ${availableChoc.length}`);
+
 
         // 3. Создаем HTML только если массив НЕ ПУСТОЙ
         let chocSelectHtml = "";
-        if (availableChoc && availableChoc.length > 0) {
-            chocSelectHtml = `
-                <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
-                    ${availableChoc.map(c => `<option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>`).join('')}
-                </select>`;
-        }
-
+        // Если шоколада 0, эта переменная останется пустой строкой и не добавится в верстку
+if (availableChoc.length > 0) {
+    chocSelectHtml = `
+        <select id="c-chocolate-${item.id}" onchange="calcConstructor()" style="width:100%; margin-top:10px;">
+            ${availableChoc.map(c => `<option value="${c.id}">${c.name} (+${c.extra} ₽/шт)</option>`).join('')}
+        </select>`;
+}
         const block = document.createElement("div");
         block.className = "constructor-group";
         block.innerHTML = `
